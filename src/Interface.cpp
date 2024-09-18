@@ -24,6 +24,8 @@ void Interface::whileRun() {
 	mousePositionUI();
 	ImGui::Separator();
 	entitySelectorUI();
+	ImGui::Separator();
+	moveEntityUI();
 
 	ImGui::End();
 }
@@ -69,9 +71,19 @@ void Interface::entitySelectorUI() {
 	}
 }
 
+void Interface::moveEntityUI() {
+	ImGui::Text("To follow mouse Press: 'Space'");
+	ImGui::Text("To set entity Press: 'Enter'");
+	ImGui::Checkbox("Follow Mouse", &fFollowMouse);
+}
+
 // Get Data From UI Componets
 const std::string Interface::getEntityTag() const {
 	return fEntityTag;
+}
+
+bool& Interface::followMouse() {
+	return fFollowMouse;
 }
 
 // Private

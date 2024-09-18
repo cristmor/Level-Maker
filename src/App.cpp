@@ -1,4 +1,5 @@
 #include "App.h"
+#include <SFML/Window/Keyboard.hpp>
 
 App::App() {
 	fAssets = std::make_shared<Assets>();
@@ -6,7 +7,10 @@ App::App() {
 	fInterface = std::make_shared<Interface>(fWindow, fAssets);
 	fOutput.open(OUTPUT_FILENAME);
 
-	fEntity = std::make_shared<Entity>();
+	fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(fInterface->getEntityTag()));
+	fCurrentEntity->movement().position = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
+	fCurrentEntity->movement().prevPosition = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
+	fEntityVector.push_back(fCurrentEntity);
 }
 
 App::~App() {
@@ -20,6 +24,7 @@ void App::run() {
 		fInterface->whileRun();
 
 		inputs();
+		movements();
 		render();
 		setEntity();
 	}
@@ -28,11 +33,13 @@ void App::run() {
 // Private
 void App::render() {
 	fWindow->clear();
-	if(fEntity->tag() != "") {
-		Vec2& position = fEntity->movement().position;
-		fEntity->animation().sprite().setPosition(position.x, position.y);
-		fEntity->animation().update();
-		fWindow->draw(fEntity->animation().sprite());
+	for(auto& entity: fEntityVector) {
+		if(entity->tag() != "") {
+			Vec2& position = entity->movement().position;
+			entity->animation().sprite().setPosition(position.x, position.y);
+			entity->animation().update();
+			fWindow->draw(entity->animation().sprite());
+		}
 	}
 	fInterface->render();
 	fWindow->display();
@@ -46,6 +53,32 @@ void App::inputs() {
 			fOutput.close();
 			fWindow->close();
 		}
+
+		if(event.type == sf::Event::KeyPressed)
+		{
+			if(event.key.code == sf::Keyboard::Space) {
+				bool inverse = !fInterface->followMouse();
+				fInterface->followMouse() = inverse;
+			}
+		}
+
+		if(event.type == sf::Event::KeyPressed)
+		{
+			if(event.key.code == sf::Keyboard::Enter) {
+				fInterface->followMouse() = false;
+				fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(fInterface->getEntityTag()));
+				fCurrentEntity->movement().position = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
+				fCurrentEntity->movement().prevPosition = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
+				fEntityVector.push_back(fCurrentEntity);
+			}
+		}
+	}
+}
+
+void App::movements() {
+	if(fInterface->followMouse()) {
+		sf::Vector2i mousePosition = sf::Mouse::getPosition(*fWindow);
+		fCurrentEntity->movement().position = {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)};
 	}
 }
 
@@ -54,9 +87,10 @@ void App::setEntity() {
 		return;
 	}
 
-	if (fEntity->tag() != fInterface->getEntityTag()) {
-		fEntity = std::make_shared<Entity>(fAssets->getEntity(fInterface->getEntityTag()));
-		fEntity->movement().position = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
-		fEntity->movement().prevPosition = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
+	if (fCurrentEntity->tag() != fInterface->getEntityTag()) {
+		*fCurrentEntity = fAssets->getEntity(fInterface->getEntityTag());
+		fCurrentEntity->movement().position = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
+		fCurrentEntity->movement().prevPosition = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
 	}
 }
+

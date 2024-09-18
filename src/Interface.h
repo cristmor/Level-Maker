@@ -18,8 +18,10 @@ public:
 	void pathUI();
 	void mousePositionUI();
 	void entitySelectorUI();
+	void moveEntityUI();
 
 	const std::string getEntityTag() const;
+	bool& followMouse();
 private:
 	std::shared_ptr<sf::RenderWindow> fWindow;
 	std::shared_ptr<Assets> fAssets;
@@ -27,4 +29,5 @@ private:
 	sf::Vector2i mousePosition;
 
 	std::string fEntityTag = "";
+	bool fFollowMouse = false;
 };

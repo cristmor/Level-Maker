@@ -30,31 +30,12 @@
       "-std=c++17",
       "-c",
       "-o",
-      "bin/Debug/Assets.o",
-      "src/Assets.cpp"
+      "bin/Debug/imgui-SFML.o",
+      "deps/imgui-sfml/imgui-SFML.cpp"
     ],
     "directory": "/home/cristmor/dev/cpp/LevelMaker",
-    "file": "/home/cristmor/dev/cpp/LevelMaker/src/Assets.cpp",
-    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/Assets.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/g++",
-      "-DDEBUG",
-      "-Isrc",
-      "-Ideps",
-      "-Ideps/imgui",
-      "-Ideps/imgui-sfml",
-      "-g",
-      "-std=c++17",
-      "-c",
-      "-o",
-      "bin/Debug/Entity.o",
-      "src/Entity.cpp"
-    ],
-    "directory": "/home/cristmor/dev/cpp/LevelMaker",
-    "file": "/home/cristmor/dev/cpp/LevelMaker/src/Entity.cpp",
-    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/Entity.o"
+    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui-sfml/imgui-SFML.cpp",
+    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui-SFML.o"
   },
   {
     "arguments": [
@@ -87,12 +68,12 @@
       "-std=c++17",
       "-c",
       "-o",
-      "bin/Debug/Interface.o",
-      "src/Interface.cpp"
+      "bin/Debug/Entity.o",
+      "src/Entity.cpp"
     ],
     "directory": "/home/cristmor/dev/cpp/LevelMaker",
-    "file": "/home/cristmor/dev/cpp/LevelMaker/src/Interface.cpp",
-    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/Interface.o"
+    "file": "/home/cristmor/dev/cpp/LevelMaker/src/Entity.cpp",
+    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/Entity.o"
   },
   {
     "arguments": [
@@ -125,88 +106,12 @@
       "-std=c++17",
       "-c",
       "-o",
-      "bin/Debug/imgui_draw.o",
-      "deps/imgui/imgui_draw.cpp"
+      "bin/Debug/imgui_tables.o",
+      "deps/imgui/imgui_tables.cpp"
     ],
     "directory": "/home/cristmor/dev/cpp/LevelMaker",
-    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui/imgui_draw.cpp",
-    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui_draw.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/g++",
-      "-DDEBUG",
-      "-Isrc",
-      "-Ideps",
-      "-Ideps/imgui",
-      "-Ideps/imgui-sfml",
-      "-g",
-      "-std=c++17",
-      "-c",
-      "-o",
-      "bin/Debug/imgui_demo.o",
-      "deps/imgui/imgui_demo.cpp"
-    ],
-    "directory": "/home/cristmor/dev/cpp/LevelMaker",
-    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui/imgui_demo.cpp",
-    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui_demo.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/g++",
-      "-DDEBUG",
-      "-Isrc",
-      "-Ideps",
-      "-Ideps/imgui",
-      "-Ideps/imgui-sfml",
-      "-g",
-      "-std=c++17",
-      "-c",
-      "-o",
-      "bin/Debug/main.o",
-      "src/main.cpp"
-    ],
-    "directory": "/home/cristmor/dev/cpp/LevelMaker",
-    "file": "/home/cristmor/dev/cpp/LevelMaker/src/main.cpp",
-    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/main.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/g++",
-      "-DDEBUG",
-      "-Isrc",
-      "-Ideps",
-      "-Ideps/imgui",
-      "-Ideps/imgui-sfml",
-      "-g",
-      "-std=c++17",
-      "-c",
-      "-o",
-      "bin/Debug/imgui.o",
-      "deps/imgui/imgui.cpp"
-    ],
-    "directory": "/home/cristmor/dev/cpp/LevelMaker",
-    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui/imgui.cpp",
-    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/g++",
-      "-DDEBUG",
-      "-Isrc",
-      "-Ideps",
-      "-Ideps/imgui",
-      "-Ideps/imgui-sfml",
-      "-g",
-      "-std=c++17",
-      "-c",
-      "-o",
-      "bin/Debug/imgui_stdlib.o",
-      "deps/imgui/misc/cpp/imgui_stdlib.cpp"
-    ],
-    "directory": "/home/cristmor/dev/cpp/LevelMaker",
-    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui/misc/cpp/imgui_stdlib.cpp",
-    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui_stdlib.o"
+    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui/imgui_tables.cpp",
+    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui_tables.o"
   },
   {
     "arguments": [
@@ -239,12 +144,12 @@
       "-std=c++17",
       "-c",
       "-o",
-      "bin/Debug/imgui_tables.o",
-      "deps/imgui/imgui_tables.cpp"
+      "bin/Debug/imgui_stdlib.o",
+      "deps/imgui/misc/cpp/imgui_stdlib.cpp"
     ],
     "directory": "/home/cristmor/dev/cpp/LevelMaker",
-    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui/imgui_tables.cpp",
-    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui_tables.o"
+    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui/misc/cpp/imgui_stdlib.cpp",
+    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui_stdlib.o"
   },
   {
     "arguments": [
@@ -258,11 +163,106 @@
       "-std=c++17",
       "-c",
       "-o",
-      "bin/Debug/imgui-SFML.o",
-      "deps/imgui-sfml/imgui-SFML.cpp"
+      "bin/Debug/imgui.o",
+      "deps/imgui/imgui.cpp"
     ],
     "directory": "/home/cristmor/dev/cpp/LevelMaker",
-    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui-sfml/imgui-SFML.cpp",
-    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui-SFML.o"
+    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui/imgui.cpp",
+    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-DDEBUG",
+      "-Isrc",
+      "-Ideps",
+      "-Ideps/imgui",
+      "-Ideps/imgui-sfml",
+      "-g",
+      "-std=c++17",
+      "-c",
+      "-o",
+      "bin/Debug/imgui_demo.o",
+      "deps/imgui/imgui_demo.cpp"
+    ],
+    "directory": "/home/cristmor/dev/cpp/LevelMaker",
+    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui/imgui_demo.cpp",
+    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui_demo.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-DDEBUG",
+      "-Isrc",
+      "-Ideps",
+      "-Ideps/imgui",
+      "-Ideps/imgui-sfml",
+      "-g",
+      "-std=c++17",
+      "-c",
+      "-o",
+      "bin/Debug/Interface.o",
+      "src/Interface.cpp"
+    ],
+    "directory": "/home/cristmor/dev/cpp/LevelMaker",
+    "file": "/home/cristmor/dev/cpp/LevelMaker/src/Interface.cpp",
+    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/Interface.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-DDEBUG",
+      "-Isrc",
+      "-Ideps",
+      "-Ideps/imgui",
+      "-Ideps/imgui-sfml",
+      "-g",
+      "-std=c++17",
+      "-c",
+      "-o",
+      "bin/Debug/Assets.o",
+      "src/Assets.cpp"
+    ],
+    "directory": "/home/cristmor/dev/cpp/LevelMaker",
+    "file": "/home/cristmor/dev/cpp/LevelMaker/src/Assets.cpp",
+    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/Assets.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-DDEBUG",
+      "-Isrc",
+      "-Ideps",
+      "-Ideps/imgui",
+      "-Ideps/imgui-sfml",
+      "-g",
+      "-std=c++17",
+      "-c",
+      "-o",
+      "bin/Debug/imgui_draw.o",
+      "deps/imgui/imgui_draw.cpp"
+    ],
+    "directory": "/home/cristmor/dev/cpp/LevelMaker",
+    "file": "/home/cristmor/dev/cpp/LevelMaker/deps/imgui/imgui_draw.cpp",
+    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/imgui_draw.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-DDEBUG",
+      "-Isrc",
+      "-Ideps",
+      "-Ideps/imgui",
+      "-Ideps/imgui-sfml",
+      "-g",
+      "-std=c++17",
+      "-c",
+      "-o",
+      "bin/Debug/main.o",
+      "src/main.cpp"
+    ],
+    "directory": "/home/cristmor/dev/cpp/LevelMaker",
+    "file": "/home/cristmor/dev/cpp/LevelMaker/src/main.cpp",
+    "output": "/home/cristmor/dev/cpp/LevelMaker/bin/Debug/main.o"
   }
 ]

@@ -24,6 +24,7 @@ public:
 private:
 	void render(); 
 	void inputs();
+	void movements();
 	void setEntity();
 
 	std::shared_ptr<sf::RenderWindow> fWindow;
@@ -31,5 +32,6 @@ private:
 	std::shared_ptr<Assets> fAssets;
 	std::ofstream fOutput;
 
-	std::shared_ptr<Entity> fEntity;
+	std::vector<std::shared_ptr<Entity>> fEntityVector;
+	std::shared_ptr<Entity> fCurrentEntity;
 };
