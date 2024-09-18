@@ -1,0 +1,17 @@
+Things to do for this project:
+
+plans and ideas:
+	- add grid were specific objects can snap too
+		> Add a check box to show/hide grid
+	- have the ability to snap to block grid or free float
+		> Add a check box to enable grid snapping
+	- output text file has the detail where things belong
+		> file format per line: <onGrid> <layer> <position X> <position Y> <animation tag> etc.
+	- text above the object that's show current position when it is being dragged
+	- display the camera center view
+	- position the level editor menu at the top-right corner
+	
+	testing:
+	- add Checkbox for enabling 'follow mouse' function, for dragging entity
+	- make vector/map to keep list of entities
+	- implement drop, select, and drag for entities on class
