@@ -11,6 +11,8 @@ App::App() {
 	fCurrentEntity->movement().position = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
 	fCurrentEntity->movement().prevPosition = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
 	fEntityVector.push_back(fCurrentEntity);
+
+	setTextSetting();
 }
 
 App::~App() {
@@ -20,6 +22,7 @@ App::~App() {
 void App::run() {
 	sf::Clock clock;
 	while(fWindow->isOpen()) {
+		fMousePosition = sf::Mouse::getPosition(*fWindow);
 
 		fInterface->whileRun();
 
@@ -41,6 +44,9 @@ void App::render() {
 			fWindow->draw(entity->animation().sprite());
 		}
 	}
+	if(fInterface->followMouse()) {
+		fWindow->draw(fTextPosition);
+	}
 	fInterface->render();
 	fWindow->display();
 }
@@ -52,6 +58,16 @@ void App::inputs() {
 		if(event.type == sf::Event::Closed) {
 			fOutput.close();
 			fWindow->close();
+		}
+
+		if(event.type == sf::Event::MouseButtonPressed) {
+			if(event.mouseButton.button == sf::Mouse::Left) {
+				selectEntity();
+			}
+
+			if(event.mouseButton.button == sf::Mouse::Right) {
+				fInterface->followMouse() = false;
+			}
 		}
 
 		if(event.type == sf::Event::KeyPressed)
@@ -77,8 +93,12 @@ void App::inputs() {
 
 void App::movements() {
 	if(fInterface->followMouse()) {
-		sf::Vector2i mousePosition = sf::Mouse::getPosition(*fWindow);
-		fCurrentEntity->movement().position = {static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)};
+		auto& entityP = fCurrentEntity->movement().position;
+		auto& entityBB = fCurrentEntity->boundingBox().halfSize;
+		auto textBB = fTextPosition.getGlobalBounds().getSize();
+		entityP = {static_cast<float>(fMousePosition.x), static_cast<float>(fMousePosition.y)};
+		fTextPosition.setPosition(entityP.x - textBB.x/2, entityP.y - entityBB.y - textBB.y - 5);
+		fTextPosition.setString("(" + std::to_string(static_cast<int>(entityP.x)) + "," + std::to_string(static_cast<int>(entityP.y)) + ")");
 	}
 }
 
@@ -94,3 +114,27 @@ void App::setEntity() {
 	}
 }
 
+void App::selectEntity() {
+	for(auto& entity: fEntityVector) {
+		if(entity) {
+			auto entityBB = entity->boundingBox().halfSize;
+			auto entityP = entity->movement().position;
+			if(fMousePosition.x >= (entityP.x - entityBB.x) && fMousePosition.x <= (entityBB.x + entityP.x) &&
+			   fMousePosition.y >= (entityP.y - entityBB.y) && fMousePosition.y <= (entityBB.y + entityP.y)) {
+				fInterface->followMouse() = true;
+			}
+		}
+	}
+}
+
+void App::setTextSetting() {
+	if(!fFont.loadFromFile("/home/cristmor/dev/cpp/LevelMaker/deps/imgui/misc/fonts/Roboto-Medium.ttf")) {
+		std::cerr << "Error: Unable to font" << std::endl; 
+	}
+
+	fTextPosition.setFont(fFont);
+	fTextPosition.setString("test");
+	fTextPosition.setCharacterSize(12);
+	fTextPosition.setFillColor(sf::Color::White);
+	fTextPosition.setPosition(200.0f, 200.0f);
+}

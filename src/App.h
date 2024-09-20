@@ -26,6 +26,9 @@ private:
 	void inputs();
 	void movements();
 	void setEntity();
+	void selectEntity();
+
+	void setTextSetting();
 
 	std::shared_ptr<sf::RenderWindow> fWindow;
 	std::shared_ptr<Interface> fInterface;
@@ -34,4 +37,7 @@ private:
 
 	std::vector<std::shared_ptr<Entity>> fEntityVector;
 	std::shared_ptr<Entity> fCurrentEntity;
+	sf::Vector2i fMousePosition;
+	sf::Text fTextPosition;
+	sf::Font fFont;
 };
