@@ -1,3 +1,11 @@
-./deps/imgui
-./bin
+deps/SFML/
+deps/imgui/
+deps/imgui-sfml/
+bin/
 
+Makefile
+*.make
+*.ini
+*.txt
+
+compile_commands.json
