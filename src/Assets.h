@@ -27,6 +27,7 @@ public:
 	const Animation& getAnimation(const std::string& tag);
 	const Entity& getEntity(const std::string& tag);
 	const std::vector<std::string> listEntityTags();
+	const std::vector<std::string> listAnimationTags(const std::string& entityTag);
 
 private:
 	void addTexture(const std::string& tag, const std::string& path);

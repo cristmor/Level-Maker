@@ -7,11 +7,6 @@ App::App() {
 	fInterface = std::make_shared<Interface>(fWindow, fAssets);
 	fOutput.open(OUTPUT_FILENAME);
 
-	fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(fInterface->getEntityTag()));
-	fCurrentEntity->movement().position = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
-	fCurrentEntity->movement().prevPosition = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
-	fEntityVector.push_back(fCurrentEntity);
-
 	setTextSetting();
 }
 
@@ -30,6 +25,7 @@ void App::run() {
 		movements();
 		render();
 		setEntity();
+		setAnimation();
 	}
 }
 
@@ -103,14 +99,17 @@ void App::movements() {
 }
 
 void App::setEntity() {
-	if(fInterface->getEntityTag() == "") {
-		return;
+	if (fInterface->createEntity()) {
+		fInterface->createEntity() = false;
+		fInterface->followMouse() = true;
+		fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(fInterface->getEntityTag()));
+		fEntityVector.push_back(fCurrentEntity);
 	}
+}
 
-	if (fCurrentEntity->tag() != fInterface->getEntityTag()) {
-		*fCurrentEntity = fAssets->getEntity(fInterface->getEntityTag());
-		fCurrentEntity->movement().position = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
-		fCurrentEntity->movement().prevPosition = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
+void App::setAnimation() {
+	if(fCurrentEntity && fInterface->getAnimation() != fCurrentEntity->animation().tag()) {
+		fCurrentEntity->animation() = fAssets->getAnimation(fInterface->getAnimation());
 	}
 }
 
@@ -121,7 +120,10 @@ void App::selectEntity() {
 			auto entityP = entity->movement().position;
 			if(fMousePosition.x >= (entityP.x - entityBB.x) && fMousePosition.x <= (entityBB.x + entityP.x) &&
 			   fMousePosition.y >= (entityP.y - entityBB.y) && fMousePosition.y <= (entityBB.y + entityP.y)) {
+				fCurrentEntity = entity;
 				fInterface->followMouse() = true;
+				fInterface->setEntityTag(fCurrentEntity->tag());
+				fInterface->setAnimationTag(fCurrentEntity->animation().tag());
 			}
 		}
 	}

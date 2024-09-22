@@ -24,6 +24,7 @@ void Interface::whileRun() {
 	mousePositionUI();
 	ImGui::Separator();
 	entitySelectorUI();
+	animationSelectorUI();
 	ImGui::Separator();
 	moveEntityUI();
 
@@ -62,13 +63,55 @@ void Interface::entitySelectorUI() {
 		}
 	}
 
+	if(fEntityTag != "" and fEntityTag != list[index]) {
+		for(int i = 0;i < list.size();i++) {
+			if(fEntityTag == list[i]) {
+				index = i;
+			}
+		}
+	}
+
+
 	if(!listChar.empty()) {
+
 	//	if(ImGui::Combo("Select Entity", &index, listChar.data(), listChar.size())) {
 	//		fEntityTag = list[index];
 	//	}
-		ImGui::ListBox("Select Entity", &index, listChar.data(), listChar.size());
-		fEntityTag = list[index];
+		if(ImGui::ListBox("Select Entity", &index, listChar.data(), listChar.size())) {
+			fEntityTag = list[index];
+			fCreateEntity = true;
+		}
 	}
+}
+
+void Interface::animationSelectorUI() {
+	static std::vector<std::string> list;
+	static std::vector<const char*> listChar;
+	static std::string prevEntityTag = fEntityTag;
+	static int index = 0;
+	if(fEntityTag != prevEntityTag) {
+		listChar.clear();
+		list = fAssets->listAnimationTags(fEntityTag);
+		for(std::string& tag: list) {
+			listChar.push_back(tag.c_str());
+		}
+		prevEntityTag = fEntityTag;
+	}
+
+	if(fAnimationTag!= "" and fAnimationTag != list[index]) {
+		for(int i = 0;i < list.size();i++) {
+			if(fAnimationTag == list[i]) {
+				index = i;
+			}
+		}
+	}
+
+
+	if(!listChar.empty()) {
+		ImGui::ListBox("Select Animation", &index, listChar.data(), listChar.size());
+		fAnimationTag = list[index];
+	}
+
 }
 
 void Interface::moveEntityUI() {
@@ -82,8 +125,24 @@ const std::string Interface::getEntityTag() const {
 	return fEntityTag;
 }
 
+const std::string Interface::getAnimation() const {
+	return fAnimationTag;
+}
+
 bool& Interface::followMouse() {
 	return fFollowMouse;
+}
+
+bool& Interface::createEntity() {
+	return fCreateEntity;
+}
+
+void Interface::setEntityTag(const std::string& tag) {
+	fEntityTag = tag;
+}
+
+void Interface::setAnimationTag(const std::string& tag) {
+	fAnimationTag = tag;
 }
 
 // Private

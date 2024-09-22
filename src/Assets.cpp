@@ -74,6 +74,23 @@ const std::vector<std::string> Assets::listEntityTags() {
 	return out;
 }
 
+const std::vector<std::string> Assets::listAnimationTags(const std::string& entityTag) {
+	std::vector<std::string> out;
+	if (entityTag == "") {
+		std::cout << "empty" << std::endl;
+		return out;
+	}
+	for(auto& pair: fAnimationMap) {
+		if(pair.second.tag().substr(0, entityTag.size() - 1) == entityTag.substr(0, entityTag.size() - 1)) {
+			out.push_back(pair.second.tag());
+		}
+	}
+
+	std::sort(out.begin(), out.end());
+
+	return out;
+}
+
 // Private
 void Assets::addTexture(const std::string& tag, const std::string& path) {
 	if(fTextureMap.find(tag) != fTextureMap.end()) {

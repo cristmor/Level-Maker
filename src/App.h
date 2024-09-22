@@ -26,6 +26,7 @@ private:
 	void inputs();
 	void movements();
 	void setEntity();
+	void setAnimation();
 	void selectEntity();
 
 	void setTextSetting();
