@@ -3,6 +3,7 @@ deps/imgui/
 deps/imgui-sfml/
 bin/
 .clang/
+.cache/
 
 Makefile
 *.make

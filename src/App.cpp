@@ -1,4 +1,5 @@
 #include "App.h"
+#include "SFML/Graphics/RectangleShape.hpp"
 #include <SFML/Window/Keyboard.hpp>
 
 App::App() {
@@ -6,6 +7,18 @@ App::App() {
 	fWindow = std::make_shared<sf::RenderWindow>(sf::VideoMode(WINDOW_SIZE_X, WINDOW_SIZE_Y), WINDOW_TITLE);
 	fInterface = std::make_shared<Interface>(fWindow, fAssets);
 	fOutput.open(OUTPUT_FILENAME);
+
+	for(int x = 0; x <= WINDOW_SIZE_X; x += (16 * SCALE)) {
+		for(int y = 0; y <= WINDOW_SIZE_Y; y += (16 * SCALE)) {
+			sf::RectangleShape rect;
+			rect.setPosition(0, 0);
+			rect.setSize({static_cast<float>(x), static_cast<float>(y)});
+			rect.setFillColor({0, 0, 0, 0});
+			rect.setOutlineColor(sf::Color::White);
+			rect.setOutlineThickness(2);
+			fRectangleVector.push_back(rect);
+		}
+	}
 
 	setTextSetting();
 }
@@ -32,6 +45,11 @@ void App::run() {
 // Private
 void App::render() {
 	fWindow->clear();
+	if(fInterface->snapGrid()) {
+		for(auto& rect: fRectangleVector) {
+			fWindow->draw(rect);
+		}
+	}
 	for(auto& entity: fEntityVector) {
 		if(entity->tag() != "") {
 			Vec2& position = entity->movement().position;
@@ -66,24 +84,13 @@ void App::inputs() {
 			}
 		}
 
-		if(event.type == sf::Event::KeyPressed)
-		{
-			if(event.key.code == sf::Keyboard::Space) {
-				bool inverse = !fInterface->followMouse();
-				fInterface->followMouse() = inverse;
-			}
-		}
-
+		/*
 		if(event.type == sf::Event::KeyPressed)
 		{
 			if(event.key.code == sf::Keyboard::Enter) {
-				fInterface->followMouse() = false;
-				fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(fInterface->getEntityTag()));
-				fCurrentEntity->movement().position = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
-				fCurrentEntity->movement().prevPosition = {WINDOW_SIZE_X/2.0f , WINDOW_SIZE_Y/2.0f};
-				fEntityVector.push_back(fCurrentEntity);
 			}
 		}
+		*/
 	}
 }
 
@@ -92,7 +99,15 @@ void App::movements() {
 		auto& entityP = fCurrentEntity->movement().position;
 		auto& entityBB = fCurrentEntity->boundingBox().halfSize;
 		auto textBB = fTextPosition.getGlobalBounds().getSize();
-		entityP = {static_cast<float>(fMousePosition.x), static_cast<float>(fMousePosition.y)};
+
+		auto newPosition = fMousePosition;
+
+		if(fInterface->snapGrid()) {
+			newPosition.x = newPosition.x + (16 * SCALE)/2 - (newPosition.x%static_cast<int>(16 * SCALE));
+			newPosition.y = newPosition.y + (16 * SCALE)/2 - (newPosition.y%static_cast<int>(16 * SCALE));
+		}
+
+		entityP = {static_cast<float>(newPosition.x), static_cast<float>(newPosition.y)};
 		fTextPosition.setPosition(entityP.x - textBB.x/2, entityP.y - entityBB.y - textBB.y - 5);
 		fTextPosition.setString("(" + std::to_string(static_cast<int>(entityP.x)) + "," + std::to_string(static_cast<int>(entityP.y)) + ")");
 	}
@@ -103,6 +118,7 @@ void App::setEntity() {
 		fInterface->createEntity() = false;
 		fInterface->followMouse() = true;
 		fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(fInterface->getEntityTag()));
+		fInterface->setAnimationTag(fCurrentEntity->animation().tag());
 		fEntityVector.push_back(fCurrentEntity);
 	}
 }

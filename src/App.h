@@ -37,6 +37,7 @@ private:
 	std::ofstream fOutput;
 
 	std::vector<std::shared_ptr<Entity>> fEntityVector;
+	std::vector<sf::RectangleShape> fRectangleVector;
 	std::shared_ptr<Entity> fCurrentEntity;
 	sf::Vector2i fMousePosition;
 	sf::Text fTextPosition;

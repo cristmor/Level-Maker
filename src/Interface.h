@@ -24,6 +24,7 @@ public:
 	const std::string getEntityTag() const;
 	const std::string getAnimation() const;
 	bool& followMouse();
+	bool& snapGrid();
 	bool& createEntity();
 
 	void setEntityTag(const std::string& tag);
@@ -38,4 +39,5 @@ private:
 	std::string fAnimationTag = "";
 	bool fCreateEntity = false;
 	bool fFollowMouse = false;
+	bool fSnapGrid = false;
 };

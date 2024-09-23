@@ -115,9 +115,8 @@ void Interface::animationSelectorUI() {
 }
 
 void Interface::moveEntityUI() {
-	ImGui::Text("To follow mouse Press: 'Space'");
-	ImGui::Text("To set entity Press: 'Enter'");
 	ImGui::Checkbox("Follow Mouse", &fFollowMouse);
+	ImGui::Checkbox("Snap Grid", &fSnapGrid);
 }
 
 // Get Data From UI Componets
@@ -131,6 +130,10 @@ const std::string Interface::getAnimation() const {
 
 bool& Interface::followMouse() {
 	return fFollowMouse;
+}
+
+bool& Interface::snapGrid() {
+	return fSnapGrid;
 }
 
 bool& Interface::createEntity() {
