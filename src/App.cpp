@@ -20,6 +20,30 @@ App::App() {
 		}
 	}
 
+	sf::VertexArray vertices(sf::Lines);
+	int RECT_SIZE = (16 * SCALE);
+	for (int x = 0; x <= WINDOW_SIZE_X; x += RECT_SIZE) {
+		for (int y = 0; y <= WINDOW_SIZE_Y; y += RECT_SIZE) {
+			sf::Vector2f topLeft(static_cast<float>(x), static_cast<float>(y));
+			sf::Vector2f bottomRight(topLeft.x + RECT_SIZE, topLeft.y + RECT_SIZE);
+
+			// Add the four lines (outline) of each rectangle
+			vertices.append(sf::Vertex(topLeft, sf::Color::White));
+			vertices.append(sf::Vertex({bottomRight.x, topLeft.y}, sf::Color::White));
+
+			vertices.append(sf::Vertex({bottomRight.x, topLeft.y}, sf::Color::White));
+			vertices.append(sf::Vertex(bottomRight, sf::Color::White));
+
+			vertices.append(sf::Vertex(bottomRight, sf::Color::White));
+			vertices.append(sf::Vertex({topLeft.x, bottomRight.y}, sf::Color::White));
+
+			vertices.append(sf::Vertex({topLeft.x, bottomRight.y}, sf::Color::White));
+			vertices.append(sf::Vertex(topLeft, sf::Color::White));
+		}
+	}
+
+	fGrid = vertices;
+
 	setTextSetting();
 }
 
@@ -45,10 +69,8 @@ void App::run() {
 // Private
 void App::render() {
 	fWindow->clear();
-	if(fInterface->snapGrid()) {
-		for(auto& rect: fRectangleVector) {
-			fWindow->draw(rect);
-		}
+	if(fInterface->showGrid()) {
+		fWindow->draw(fGrid);
 	}
 	for(auto& entity: fEntityVector) {
 		if(entity->tag() != "") {
@@ -81,6 +103,12 @@ void App::inputs() {
 
 			if(event.mouseButton.button == sf::Mouse::Right) {
 				fInterface->followMouse() = false;
+			}
+		}
+
+		if(event.type == sf::Event::KeyPressed) {
+			if(event.key.code == sf::Keyboard::R) {
+				fInterface->createEntity() = true;
 			}
 		}
 
@@ -120,6 +148,18 @@ void App::setEntity() {
 		fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(fInterface->getEntityTag()));
 		fInterface->setAnimationTag(fCurrentEntity->animation().tag());
 		fEntityVector.push_back(fCurrentEntity);
+	}
+
+	if (fInterface->deleteEntity()) {
+		for (int i = 0;i < fEntityVector.size();i++) {
+			if (fCurrentEntity == fEntityVector[i]) {
+				fEntityVector.erase(fEntityVector.begin() + i);
+			}
+		}
+		fCurrentEntity = fEntityVector.back();
+		fInterface->setEntityTag(fCurrentEntity->tag());
+		fInterface->setAnimationTag(fCurrentEntity->animation().tag());
+		fInterface->deleteEntity() = false;
 	}
 }
 

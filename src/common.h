@@ -18,6 +18,7 @@
 #include "SFML/Graphics.hpp"
 #include "SFML/System/Clock.hpp"
 #include "SFML/Window/Event.hpp"
+#include "SFML/Graphics/PrimitiveType.hpp"
 #include "imgui.h"
 #include "imgui-SFML.h"
 

@@ -20,12 +20,13 @@ void Interface::whileRun() {
 	ImGui::Begin("Level Editor");
 
 	// UI Elements
+	ImGui::SeparatorText("Basic Information");
 	pathUI();
 	mousePositionUI();
-	ImGui::Separator();
+	ImGui::SeparatorText("Entity Selection");
 	entitySelectorUI();
 	animationSelectorUI();
-	ImGui::Separator();
+	ImGui::SeparatorText("Test");
 	moveEntityUI();
 
 	ImGui::End();
@@ -117,6 +118,10 @@ void Interface::animationSelectorUI() {
 void Interface::moveEntityUI() {
 	ImGui::Checkbox("Follow Mouse", &fFollowMouse);
 	ImGui::Checkbox("Snap Grid", &fSnapGrid);
+	ImGui::Checkbox("Show Grid", &fShowGrid);
+	if(ImGui::Button("Delete")) {
+		fDeleteEntity = true;
+	}
 }
 
 // Get Data From UI Componets
@@ -136,8 +141,16 @@ bool& Interface::snapGrid() {
 	return fSnapGrid;
 }
 
+bool& Interface::showGrid() {
+	return fShowGrid;
+}
+
 bool& Interface::createEntity() {
 	return fCreateEntity;
+}
+
+bool& Interface::deleteEntity() {
+	return fDeleteEntity;
 }
 
 void Interface::setEntityTag(const std::string& tag) {

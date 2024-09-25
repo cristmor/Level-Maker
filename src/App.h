@@ -40,6 +40,7 @@ private:
 	std::vector<sf::RectangleShape> fRectangleVector;
 	std::shared_ptr<Entity> fCurrentEntity;
 	sf::Vector2i fMousePosition;
+	sf::VertexArray fGrid;
 	sf::Text fTextPosition;
 	sf::Font fFont;
 };
