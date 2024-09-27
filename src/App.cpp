@@ -68,6 +68,7 @@ void App::run() {
 
 // Private
 void App::render() {
+	sortEntitiesByLayer();
 	fWindow->clear();
 	if(fInterface->showGrid()) {
 		fWindow->draw(fGrid);
@@ -146,6 +147,7 @@ void App::setEntity() {
 		fInterface->createEntity() = false;
 		fInterface->followMouse() = true;
 		fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(fInterface->getEntityTag()));
+		fCurrentEntity->animation().layer() = fInterface->layer();
 		fInterface->setAnimationTag(fCurrentEntity->animation().tag());
 		fEntityVector.push_back(fCurrentEntity);
 	}
@@ -195,4 +197,16 @@ void App::setTextSetting() {
 	fTextPosition.setCharacterSize(12);
 	fTextPosition.setFillColor(sf::Color::White);
 	fTextPosition.setPosition(200.0f, 200.0f);
+}
+
+void App::sortEntitiesByLayer() {
+	for(size_t x = 0;x < fEntityVector.size(); x++) {
+		for(size_t y = 0; y < fEntityVector.size() - 1;y++) {
+			if(fEntityVector[y]->animation().layer() > fEntityVector[y+1]->animation().layer()) {
+				std::shared_ptr<Entity> temp = fEntityVector[y];
+				fEntityVector[y] = fEntityVector[y+1];
+				fEntityVector[y+1] = temp;
+			}
+		}
+	}
 }

@@ -17,6 +17,7 @@ public:
 	const std::string& tag() const;
 	const Vec2& getSize() const;
 	sf::Sprite& sprite();
+	size_t& layer();
 
 private:
 
@@ -28,5 +29,6 @@ private:
 	std::string fTag = "";
 	Vec2 fSize = {1, 1};
 	bool fEnded = false;
+	size_t fLayer = 1;
 };
 

@@ -25,11 +25,14 @@ private:
 	void render(); 
 	void inputs();
 	void movements();
+
 	void setEntity();
 	void setAnimation();
 	void selectEntity();
 
 	void setTextSetting();
+
+	void sortEntitiesByLayer();
 
 	std::shared_ptr<sf::RenderWindow> fWindow;
 	std::shared_ptr<Interface> fInterface;

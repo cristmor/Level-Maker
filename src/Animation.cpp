@@ -57,5 +57,9 @@ sf::Sprite& Animation::sprite() {
 	return fSprite;
 }
 
+size_t& Animation::layer() {
+	return fLayer;
+}
+
 // Private
 

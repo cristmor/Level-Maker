@@ -23,6 +23,7 @@ public:
 
 	const std::string getEntityTag() const;
 	const std::string getAnimation() const;
+	int& layer();
 	bool& followMouse();
 	bool& snapGrid();
 	bool& showGrid();
@@ -39,6 +40,7 @@ private:
 
 	std::string fEntityTag = "";
 	std::string fAnimationTag = "";
+	int fLayer = 1;
 	bool fCreateEntity = false;
 	bool fDeleteEntity = false;
 	bool fFollowMouse = false;

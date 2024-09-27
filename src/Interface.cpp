@@ -113,6 +113,8 @@ void Interface::animationSelectorUI() {
 		fAnimationTag = list[index];
 	}
 
+	ImGui::InputInt("Layer", &fLayer);
+
 }
 
 void Interface::moveEntityUI() {
@@ -131,6 +133,10 @@ const std::string Interface::getEntityTag() const {
 
 const std::string Interface::getAnimation() const {
 	return fAnimationTag;
+}
+
+int& Interface::layer() {
+	return fLayer;
 }
 
 bool& Interface::followMouse() {
