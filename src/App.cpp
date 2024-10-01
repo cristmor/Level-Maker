@@ -6,7 +6,7 @@ App::App() {
 	fAssets = std::make_shared<Assets>();
 	fWindow = std::make_shared<sf::RenderWindow>(sf::VideoMode(WINDOW_SIZE_X, WINDOW_SIZE_Y), WINDOW_TITLE);
 	fInterface = std::make_shared<Interface>(fWindow, fAssets);
-	fOutput.open(OUTPUT_FILENAME);
+	//fOutput.open(OUTPUT_FILENAME);
 
 	for(int x = 0; x <= WINDOW_SIZE_X; x += (16 * SCALE)) {
 		for(int y = 0; y <= WINDOW_SIZE_Y; y += (16 * SCALE)) {
@@ -65,6 +65,7 @@ void App::run() {
 		setAnimation();
 		setLayer();
 		saveLevel();
+		loadLevel();
 	}
 }
 
@@ -204,6 +205,7 @@ void App::selectEntity() {
 
 void App::saveLevel() {
 	if(fInterface->save()) {
+		std::cout << "Saved level to " << fInterface->getFilename() << std::endl;
 		std::ofstream file;
 		file.open(fInterface->getFilename());
 
@@ -213,11 +215,61 @@ void App::saveLevel() {
 				<< entity->tag() << " "
 				<< entity->animation().tag() << " "
 				<< entity->animation().layer() << std::endl;
+
+			std::cout << entity->movement().position.x << " "
+				<< entity->movement().position.y << " "
+				<< entity->tag() << " "
+				<< entity->animation().tag() << " "
+				<< entity->animation().layer() << std::endl;
 		}
 
 		file.close();
 		
 		fInterface->save() = false;
+	}
+}
+
+struct Output {
+	int x;
+	int y;
+	std::string eTag;
+	std::string aTag;
+	int layer;
+};
+
+void App::loadLevel() {
+	if(fInterface->load()) {
+		std::cout << "Load level from " << fInterface->getFilename() << std::endl;
+		std::ifstream file(fInterface->getFilename());
+		Output out;
+		while(file.good()) {
+			file >> out.x
+				>> out.y
+				>> out.eTag
+				>> out.aTag
+				>> out.layer;
+
+		std::cout << out.x << " "
+				<< out.y << " "
+				<< out.eTag << " "
+				<< out.aTag << " "
+				<< out.layer << " "
+				<< std::endl;
+
+
+			fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(out.eTag));
+			fCurrentEntity->animation() = fAssets->getAnimation(out.aTag);
+			fCurrentEntity->movement().position = {static_cast<float>(out.x), static_cast<float>(out.y)};
+			fCurrentEntity->movement().prevPosition = fCurrentEntity->movement().position;
+			fCurrentEntity->animation().layer() = out.layer;
+			fInterface->setLayer(out.layer);
+
+			fEntityVector.push_back(fCurrentEntity);
+		}
+
+		file.close();
+
+		fInterface->load() = false;
 	}
 }
 

@@ -32,6 +32,7 @@ private:
 	void selectEntity();
 
 	void saveLevel();
+	void loadLevel();
 
 	void setTextSetting();
 

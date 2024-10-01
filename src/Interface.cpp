@@ -134,8 +134,13 @@ void Interface::saveUI() {
 	std::strncpy(buf, fFilename.c_str(), 32);
 	ImGui::InputText("File Name", buf, IM_ARRAYSIZE(buf));
 	fFilename = buf;
+
 	if (ImGui::Button("Save")) {
 		fSave = true;
+	}
+	ImGui::SameLine();
+	if(ImGui::Button("Load")) {
+		fLoad = true;
 	}
 }
 
@@ -178,6 +183,10 @@ bool& Interface::deleteEntity() {
 
 bool& Interface::save() {
 	return fSave;
+}
+
+bool& Interface::load() {
+	return fLoad;
 }
 
 void Interface::setEntityTag(const std::string& tag) {

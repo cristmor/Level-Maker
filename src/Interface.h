@@ -32,6 +32,7 @@ public:
 	bool& createEntity();
 	bool& deleteEntity();
 	bool& save();
+	bool& load();
 
 	void setEntityTag(const std::string& tag);
 	void setAnimationTag(const std::string& tag);
@@ -42,7 +43,7 @@ private:
 	sf::Clock fClock;
 	sf::Vector2i mousePosition;
 
-	std::string fFilename = "level.txt";
+	std::string fFilename = "test.txt";
 	std::string fEntityTag = "";
 	std::string fAnimationTag = "";
 	int fLayer = 1;
@@ -52,4 +53,5 @@ private:
 	bool fSnapGrid = false;
 	bool fShowGrid = false;
 	bool fSave = false;
+	bool fLoad = false;
 };
