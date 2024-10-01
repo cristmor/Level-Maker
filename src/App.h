@@ -28,7 +28,10 @@ private:
 
 	void setEntity();
 	void setAnimation();
+	void setLayer();
 	void selectEntity();
+
+	void saveLevel();
 
 	void setTextSetting();
 

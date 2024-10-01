@@ -1,4 +1,5 @@
 #include "Interface.h"
+#include "imgui.h"
 
 Interface::Interface(std::shared_ptr<sf::RenderWindow>& window, std::shared_ptr<Assets>& assets):
 	fWindow(window),
@@ -16,7 +17,7 @@ void Interface::whileRun() {
 	mousePosition = sf::Mouse::getPosition(*fWindow);
 
 	ImGui::SFML::Update(*fWindow, fClock.restart());
-	ImGui::SetNextWindowSize({400, 400});
+	ImGui::SetNextWindowSize({400, 600});
 	ImGui::Begin("Level Editor");
 
 	// UI Elements
@@ -28,6 +29,7 @@ void Interface::whileRun() {
 	animationSelectorUI();
 	ImGui::SeparatorText("Test");
 	moveEntityUI();
+	saveUI();
 
 	ImGui::End();
 }
@@ -126,6 +128,17 @@ void Interface::moveEntityUI() {
 	}
 }
 
+void Interface::saveUI() {
+	ImGui::SeparatorText("File Settings");
+	char buf[32];
+	std::strncpy(buf, fFilename.c_str(), 32);
+	ImGui::InputText("File Name", buf, IM_ARRAYSIZE(buf));
+	fFilename = buf;
+	if (ImGui::Button("Save")) {
+		fSave = true;
+	}
+}
+
 // Get Data From UI Componets
 const std::string Interface::getEntityTag() const {
 	return fEntityTag;
@@ -133,6 +146,10 @@ const std::string Interface::getEntityTag() const {
 
 const std::string Interface::getAnimation() const {
 	return fAnimationTag;
+}
+
+const std::string Interface::getFilename() const {
+	return fFilename;
 }
 
 int& Interface::layer() {
@@ -159,12 +176,20 @@ bool& Interface::deleteEntity() {
 	return fDeleteEntity;
 }
 
+bool& Interface::save() {
+	return fSave;
+}
+
 void Interface::setEntityTag(const std::string& tag) {
 	fEntityTag = tag;
 }
 
 void Interface::setAnimationTag(const std::string& tag) {
 	fAnimationTag = tag;
+}
+
+void Interface::setLayer(const int& layer) {
+	fLayer = layer;
 }
 
 // Private

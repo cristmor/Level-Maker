@@ -63,6 +63,8 @@ void App::run() {
 		render();
 		setEntity();
 		setAnimation();
+		setLayer();
+		saveLevel();
 	}
 }
 
@@ -158,9 +160,15 @@ void App::setEntity() {
 				fEntityVector.erase(fEntityVector.begin() + i);
 			}
 		}
-		fCurrentEntity = fEntityVector.back();
-		fInterface->setEntityTag(fCurrentEntity->tag());
-		fInterface->setAnimationTag(fCurrentEntity->animation().tag());
+		if(fEntityVector.size()) {
+			fCurrentEntity = fEntityVector.back();
+			fInterface->setEntityTag(fCurrentEntity->tag());
+			fInterface->setAnimationTag(fCurrentEntity->animation().tag());
+		}
+		else {
+			fCurrentEntity = std::make_shared<Entity>();
+			fInterface->followMouse() = false;
+		}
 		fInterface->deleteEntity() = false;
 	}
 }
@@ -168,6 +176,12 @@ void App::setEntity() {
 void App::setAnimation() {
 	if(fCurrentEntity && fInterface->getAnimation() != fCurrentEntity->animation().tag()) {
 		fCurrentEntity->animation() = fAssets->getAnimation(fInterface->getAnimation());
+	}
+}
+
+void App::setLayer() {
+	if(fCurrentEntity && fInterface->layer() != fCurrentEntity->animation().layer()) {
+		fCurrentEntity->animation().layer() = fInterface->layer();
 	}
 }
 
@@ -182,8 +196,28 @@ void App::selectEntity() {
 				fInterface->followMouse() = true;
 				fInterface->setEntityTag(fCurrentEntity->tag());
 				fInterface->setAnimationTag(fCurrentEntity->animation().tag());
+				fInterface->setLayer(fCurrentEntity->animation().layer());
 			}
 		}
+	}
+}
+
+void App::saveLevel() {
+	if(fInterface->save()) {
+		std::ofstream file;
+		file.open(fInterface->getFilename());
+
+		for(auto& entity : fEntityVector) {
+			file << entity->movement().position.x << " "
+				<< entity->movement().position.y << " "
+				<< entity->tag() << " "
+				<< entity->animation().tag() << " "
+				<< entity->animation().layer() << std::endl;
+		}
+
+		file.close();
+		
+		fInterface->save() = false;
 	}
 }
 
