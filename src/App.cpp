@@ -66,6 +66,46 @@ void App::run() {
 		setLayer();
 		saveLevel();
 		loadLevel();
+
+		sf::View view = fWindow->getView();
+
+		view.setCenter(fCameraPosition.x, fCameraPosition.y);
+		fWindow->setView(view);
+
+
+		fGrid.clear();
+		sf::VertexArray vertices(sf::Lines);
+		int RECT_SIZE = (16 * SCALE);
+
+
+		// Looping through, but starting relative to the center position
+		for (int x = fCameraPosition.x - (WINDOW_SIZE_X / 2) - (SCALE * 32); x <= fCameraPosition.x + (WINDOW_SIZE_X / 2) + (SCALE * 32); x += RECT_SIZE) {
+		    for (int y = fCameraPosition.y - (WINDOW_SIZE_Y / 2) - (SCALE * 32); y <= fCameraPosition.y + (WINDOW_SIZE_Y / 2) +(SCALE * 32); y += RECT_SIZE) {
+			sf::Vector2f topLeft(static_cast<float>(x), static_cast<float>(y));
+			sf::Vector2f bottomRight(topLeft.x + RECT_SIZE, topLeft.y + RECT_SIZE);
+
+			topLeft.x += (16 * SCALE) - (static_cast<int>(topLeft.x)%static_cast<int>(16 * SCALE));
+			topLeft.y += (16 * SCALE) - (static_cast<int>(topLeft.y)%static_cast<int>(16 * SCALE));
+
+			bottomRight.x += (16 * SCALE) - (static_cast<int>(bottomRight.x)%static_cast<int>(16 * SCALE));
+			bottomRight.y += (16 * SCALE) - (static_cast<int>(bottomRight.y)%static_cast<int>(16 * SCALE));
+
+			// Add the four lines (outline) of each rectangle
+			vertices.append(sf::Vertex(topLeft, sf::Color::White));
+			vertices.append(sf::Vertex({bottomRight.x, topLeft.y}, sf::Color::White));
+
+			vertices.append(sf::Vertex({bottomRight.x, topLeft.y}, sf::Color::White));
+			vertices.append(sf::Vertex(bottomRight, sf::Color::White));
+
+			vertices.append(sf::Vertex(bottomRight, sf::Color::White));
+			vertices.append(sf::Vertex({topLeft.x, bottomRight.y}, sf::Color::White));
+
+			vertices.append(sf::Vertex({topLeft.x, bottomRight.y}, sf::Color::White));
+			vertices.append(sf::Vertex(topLeft, sf::Color::White));
+		    }
+		}
+
+		fGrid = vertices;
 	}
 }
 
@@ -114,7 +154,7 @@ void App::inputs() {
 			if(event.key.code == sf::Keyboard::R) {
 				fInterface->createEntity() = true;
 			}
-		}
+		}	
 
 		/*
 		if(event.type == sf::Event::KeyPressed)
@@ -123,6 +163,21 @@ void App::inputs() {
 			}
 		}
 		*/
+	}
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
+		fCameraPosition += { 0, -1 };
+	}
+
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
+		fCameraPosition += { 0, 1 };
+	}
+
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+		fCameraPosition += { -1, 0 };
+	}
+
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+		fCameraPosition += { 1, 0 };
 	}
 }
 

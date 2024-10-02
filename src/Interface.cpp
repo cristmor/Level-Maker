@@ -53,6 +53,8 @@ void Interface::pathUI() {
 }
 
 void Interface::mousePositionUI() {
+	auto windowPosition = fWindow->getView().getCenter();
+	ImGui::Text("Window Position: (%d, %d)\n", static_cast<int>(windowPosition.x), static_cast<int>(windowPosition.y));
 	ImGui::Text("Mouse Position: (%d, %d)\n", mousePosition.x, mousePosition.y);
 }
 

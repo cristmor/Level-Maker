@@ -46,6 +46,7 @@ private:
 	std::vector<std::shared_ptr<Entity>> fEntityVector;
 	std::vector<sf::RectangleShape> fRectangleVector;
 	std::shared_ptr<Entity> fCurrentEntity;
+	sf::Vector2i fCameraPosition = {static_cast<int>(WINDOW_SIZE_X/2), static_cast<int>(WINDOW_SIZE_Y/2)};
 	sf::Vector2i fMousePosition;
 	sf::VertexArray fGrid;
 	sf::Text fTextPosition;
