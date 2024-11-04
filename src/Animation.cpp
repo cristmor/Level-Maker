@@ -1,65 +1,48 @@
-#include "Animation.h"
+#include "Animation.hpp"
+#include <SFML/System/Vector2.hpp>
+#include <cstddef>
 
-Animation::Animation() {
-}
+Animation::Animation(std::string tag, size_t count, size_t speed, size_t sizeX, size_t sizeY, size_t row, size_t column, bool isCustom, const sf::Vector2i& offset, const sf::Vector2f& boundingBox, const sf::Texture& texture):
+	mTag(tag),
+	mCount(count),
+	mSpeed(speed),
+	mSizeX(sizeX),
+	mSizeY(sizeY),
+	mRow(row),
+	mColumn(column),
+	mCurrent(column),
+	mIsCustom(isCustom),
+	mOffset(offset),
+	mBoundingBox({ SCALE * boundingBox.x, SCALE * boundingBox.y }),
+	mSprite(texture) {
 
-Animation::Animation(const std::string& tag, const sf::Texture& t):
-	Animation(tag, t, 1, 0) {
-}
-
-Animation::Animation(const std::string& tag, const sf::Texture& t, const unsigned int& count, const unsigned int& s):
-	fTag(tag),
-	fSprite(t),
-	fCellCount(count),
-	fSpeed(s) {
-}
-
-Animation::Animation(const std::string& tag, const sf::Texture& texture, const unsigned int& count, const unsigned int& speed, const unsigned int& size, const unsigned int& position, const Vec2& centerOffset):
-	fTag(tag),
-	fSprite(texture),
-	fCellCount(count),
-	fSpeed(speed),
-	fSize(Vec2(size, size)),
-	fPosition(position) {
-	fSprite.setOrigin((fSize.x/2) + centerOffset.x, (fSize.y/2) + centerOffset.y);
-	fSprite.setScale(fScale.x, fScale.y);
+	mSprite.setOrigin((mSizeX/2.0) + mOffset.x, (mSizeY/2.0) + mOffset.y);
+	mSprite.setScale(SCALE, SCALE);
+	setTexture();
 }
 
 // Public
 void Animation::update() {
-	unsigned int currentCell = 0;
-	if(fSpeed) {
-		currentCell = (fCurrentFrame/fSpeed) % fCellCount;
+	static size_t frames = 0;
+	if(mSpeed) {
+		mCurrent = (frames / (mSpeed * 6)) % mCount;
+		if(mCurrent == mCount) {
+			mEnded = true;
+		}
+		else {
+			mEnded = false;
+		}
 	}
-	fSprite.setTextureRect(sf::IntRect(std::floor(currentCell)*fSize.x, fSize.y*(fPosition - 1), fSize.x, fSize.y));
-	if(currentCell == fCellCount-1) {
-		fEnded = true;
-	}
-	else {
-		fEnded = false;
-	}
-	fCurrentFrame++;
-}
-
-const bool& Animation::hasEnded() const {
-	return fEnded;
-}
-
-const std::string& Animation::tag() const {
-	return fTag;
-}
-
-const Vec2& Animation::getSize() const {
-	return fSize;
-}
-
-sf::Sprite& Animation::sprite() {
-	return fSprite;
-}
-
-size_t& Animation::layer() {
-	return fLayer;
+	setTexture();
+	frames++;
 }
 
 // Private
-
+void Animation::setTexture() {
+	if(mIsCustom) {
+		mSprite.setTextureRect(sf::IntRect(mRow, mColumn, mSizeX, mSizeY));
+	}
+	else {
+		mSprite.setTextureRect(sf::IntRect(std::floor(mColumn) * mSizeX, (mRow - 1) * mSizeY, mSizeX, mSizeY));
+	}
+}

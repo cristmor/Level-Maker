@@ -1,13 +1,13 @@
-#include "App.h"
-#include "SFML/Graphics/RectangleShape.hpp"
-#include <SFML/Window/Keyboard.hpp>
+#include "App.hpp"
+#include "EntityManager.hpp"
+#include "GameState.hpp"
 
 App::App() {
-	fAssets = std::make_shared<Assets>();
-	fWindow = std::make_shared<sf::RenderWindow>(sf::VideoMode(WINDOW_SIZE_X, WINDOW_SIZE_Y), WINDOW_TITLE);
-	fInterface = std::make_shared<Interface>(fWindow, fAssets);
+	mAssets = std::make_shared<Assets>();
+	//fWindow = std::make_shared<sf::RenderWindow>(sf::VideoMode(WINDOW_SIZE_X, WINDOW_SIZE_Y), WINDOW_TITLE);
 	//fOutput.open(OUTPUT_FILENAME);
 
+	/*
 	for(int x = 0; x <= WINDOW_SIZE_X; x += (16 * SCALE)) {
 		for(int y = 0; y <= WINDOW_SIZE_Y; y += (16 * SCALE)) {
 			sf::RectangleShape rect;
@@ -43,6 +43,7 @@ App::App() {
 	}
 
 	fGrid = vertices;
+	*/
 
 	setTextSetting();
 }
@@ -52,11 +53,17 @@ App::~App() {
 
 // Public
 void App::run() {
-	sf::Clock clock;
-	while(fWindow->isOpen()) {
-		fMousePosition = sf::Mouse::getPosition(*fWindow);
+	static sf::RenderWindow& window = GameState::getInstance().window();
 
-		fInterface->whileRun();
+	static sf::Vector2i& mousePosition = AppState::getInstance().mousePosition();
+	static sf::Vector2i& cameraPosition = AppState::getInstance().cameraPosition();
+	static sf::VertexArray& grid = AppState::getInstance().grid();
+
+	sf::Clock clock;
+	while(window.isOpen()) {
+		mousePosition = sf::Mouse::getPosition(window);
+
+		mInterface.whileRun();
 
 		inputs();
 		movements();
@@ -67,20 +74,20 @@ void App::run() {
 		saveLevel();
 		loadLevel();
 
-		sf::View view = fWindow->getView();
+		sf::View view = window.getView();
 
-		view.setCenter(fCameraPosition.x, fCameraPosition.y);
-		fWindow->setView(view);
+		view.setCenter(cameraPosition.x, cameraPosition.y);
+		window.setView(view);
 
 
-		fGrid.clear();
+		grid.clear();
 		sf::VertexArray vertices(sf::Lines);
 		int RECT_SIZE = (16 * SCALE);
 
 
 		// Looping through, but starting relative to the center position
-		for (int x = fCameraPosition.x - (WINDOW_SIZE_X / 2) - (SCALE * 32); x <= fCameraPosition.x + (WINDOW_SIZE_X / 2) + (SCALE * 32); x += RECT_SIZE) {
-		    for (int y = fCameraPosition.y - (WINDOW_SIZE_Y / 2) - (SCALE * 32); y <= fCameraPosition.y + (WINDOW_SIZE_Y / 2) +(SCALE * 32); y += RECT_SIZE) {
+		for (int x = cameraPosition.x - (WINDOW_SIZE_X / 2.0) - (SCALE * 32); x <= cameraPosition.x + (WINDOW_SIZE_X / 2.0) + (SCALE * 32); x += RECT_SIZE) {
+		    for (int y = cameraPosition.y - (WINDOW_SIZE_Y / 2.0) - (SCALE * 32); y <= cameraPosition.y + (WINDOW_SIZE_Y / 2.0) +(SCALE * 32); y += RECT_SIZE) {
 			sf::Vector2f topLeft(static_cast<float>(x), static_cast<float>(y));
 			sf::Vector2f bottomRight(topLeft.x + RECT_SIZE, topLeft.y + RECT_SIZE);
 
@@ -105,39 +112,57 @@ void App::run() {
 		    }
 		}
 
-		fGrid = vertices;
+		grid= vertices;
 	}
 }
 
 // Private
 void App::render() {
+	static sf::RenderWindow& window = GameState::getInstance().window();
+	static const EntityVector& entities = GameState::getInstance().entityManager().entities();
+
+	static sf::VertexArray& grid = AppState::getInstance().grid();
+	static sf::Text& textPosition = AppState::getInstance().textPosition();
+	static bool& showGrid = AppState::getInstance().showGrid();
+	static bool& followMouse = AppState::getInstance().followMouse();
+
 	sortEntitiesByLayer();
-	fWindow->clear();
-	if(fInterface->showGrid()) {
-		fWindow->draw(fGrid);
+	window.clear();
+	if(showGrid) {
+		window.draw(grid);
 	}
-	for(auto& entity: fEntityVector) {
+	for(auto& entity : entities) {
 		if(entity->tag() != "") {
+			/*
 			Vec2& position = entity->movement().position;
 			entity->animation().sprite().setPosition(position.x, position.y);
 			entity->animation().update();
 			fWindow->draw(entity->animation().sprite());
+			*/
 		}
 	}
-	if(fInterface->followMouse()) {
-		fWindow->draw(fTextPosition);
+	if(followMouse) {
+		window.draw(textPosition);
 	}
-	fInterface->render();
-	fWindow->display();
+	ImGui::SFML::Render(window);
+	window.display();
 }
 
 void App::inputs() {
+	static sf::RenderWindow& window = GameState::getInstance().window();
+
+	static sf::Vector2i& cameraPosition = AppState::getInstance().cameraPosition();
+	static std::ofstream& output = AppState::getInstance().output();
+	static bool& followMouse = AppState::getInstance().followMouse();
+	static bool& newEntity = AppState::getInstance().newEntity();
+
+
 	sf::Event event;
-	while(fWindow->pollEvent(event)) {
-		fInterface->events(event);
+	while(window.pollEvent(event)) {
+		mInterface.events(event);
 		if(event.type == sf::Event::Closed) {
-			fOutput.close();
-			fWindow->close();
+			output.close();
+			window.close();
 		}
 
 		if(event.type == sf::Event::MouseButtonPressed) {
@@ -146,13 +171,13 @@ void App::inputs() {
 			}
 
 			if(event.mouseButton.button == sf::Mouse::Right) {
-				fInterface->followMouse() = false;
+				followMouse = false;
 			}
 		}
 
 		if(event.type == sf::Event::KeyPressed) {
 			if(event.key.code == sf::Keyboard::R) {
-				fInterface->createEntity() = true;
+				newEntity = true;
 			}
 		}	
 
@@ -165,24 +190,26 @@ void App::inputs() {
 		*/
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-		fCameraPosition += { 0, -1 };
+		cameraPosition += { 0, -1 };
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-		fCameraPosition += { 0, 1 };
+		cameraPosition += { 0, 1 };
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-		fCameraPosition += { -1, 0 };
+		cameraPosition += { -1, 0 };
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-		fCameraPosition += { 1, 0 };
+		cameraPosition += { 1, 0 };
 	}
 }
 
 void App::movements() {
-	if(fInterface->followMouse()) {
+	static bool& followMouse = AppState::getInstance().followMouse();
+	if(followMouse) {
+		/*
 		auto& entityP = fCurrentEntity->movement().position;
 		auto& entityBB = fCurrentEntity->boundingBox().halfSize;
 		auto textBB = fTextPosition.getGlobalBounds().getSize();
@@ -197,11 +224,14 @@ void App::movements() {
 		entityP = {static_cast<float>(newPosition.x), static_cast<float>(newPosition.y)};
 		fTextPosition.setPosition(entityP.x - textBB.x/2, entityP.y - entityBB.y - textBB.y - 5);
 		fTextPosition.setString("(" + std::to_string(static_cast<int>(entityP.x)) + "," + std::to_string(static_cast<int>(entityP.y)) + ")");
+		*/
 	}
 }
 
 void App::setEntity() {
-	if (fInterface->createEntity()) {
+	static bool& newEntity = AppState::getInstance().newEntity();
+	if(newEntity) {
+		/*
 		fInterface->createEntity() = false;
 		fInterface->followMouse() = true;
 		fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(fInterface->getEntityTag()));
@@ -226,24 +256,31 @@ void App::setEntity() {
 			fInterface->followMouse() = false;
 		}
 		fInterface->deleteEntity() = false;
+		*/
 	}
 }
 
 void App::setAnimation() {
+	/*
 	if(fCurrentEntity && fInterface->getAnimation() != fCurrentEntity->animation().tag()) {
 		fCurrentEntity->animation() = fAssets->getAnimation(fInterface->getAnimation());
 	}
+	*/
 }
 
 void App::setLayer() {
+	/*
 	if(fCurrentEntity && fInterface->layer() != fCurrentEntity->animation().layer()) {
-		fCurrentEntity->animation().layer() = fInterface->layer();
+		//fCurrentEntity->animation().layer() = fInterface->layer();
 	}
+	*/
 }
 
 void App::selectEntity() {
-	for(auto& entity: fEntityVector) {
+	static const EntityVector& entities = GameState::getInstance().entityManager().entities();
+	for(auto& entity: entities) {
 		if(entity) {
+			/*
 			auto entityBB = entity->boundingBox().halfSize;
 			auto entityP = entity->movement().position;
 			if(fMousePosition.x >= (entityP.x - entityBB.x) && fMousePosition.x <= (entityBB.x + entityP.x) &&
@@ -254,17 +291,24 @@ void App::selectEntity() {
 				fInterface->setAnimationTag(fCurrentEntity->animation().tag());
 				fInterface->setLayer(fCurrentEntity->animation().layer());
 			}
+			*/
 		}
 	}
 }
 
 void App::saveLevel() {
-	if(fInterface->save()) {
-		std::cout << "Saved level to " << fInterface->getFilename() << std::endl;
-		std::ofstream file;
-		file.open(fInterface->getFilename());
+	static const EntityVector& entities = GameState::getInstance().entityManager().entities();
 
-		for(auto& entity : fEntityVector) {
+	static bool& save = AppState::getInstance().save();
+	static std::string& filename = AppState::getInstance().filename();
+
+	if(save) {
+		std::cout << "Saved level to " << filename << std::endl;
+		std::ofstream file;
+		file.open(filename);
+
+		for(auto& entity : entities) {
+			/*
 			file << entity->movement().position.x << " "
 				<< entity->movement().position.y << " "
 				<< entity->tag() << " "
@@ -276,26 +320,23 @@ void App::saveLevel() {
 				<< entity->tag() << " "
 				<< entity->animation().tag() << " "
 				<< entity->animation().layer() << std::endl;
+			*/
 		}
 
 		file.close();
 		
-		fInterface->save() = false;
+		save = false;
 	}
 }
 
-struct Output {
-	int x;
-	int y;
-	std::string eTag;
-	std::string aTag;
-	int layer;
-};
-
 void App::loadLevel() {
-	if(fInterface->load()) {
-		std::cout << "Load level from " << fInterface->getFilename() << std::endl;
-		std::ifstream file(fInterface->getFilename());
+	static bool& load = AppState::getInstance().load();
+	static std::string& filename = AppState::getInstance().filename();
+	static std::shared_ptr<Entity>& currentEntity = AppState::getInstance().currentEntity();
+
+	if(load) {
+		std::cout << "Load level from " << filename << std::endl;
+		std::ifstream file(filename);
 		Output out;
 		while(file.good()) {
 			file >> out.x
@@ -312,6 +353,7 @@ void App::loadLevel() {
 				<< std::endl;
 
 
+			/*
 			fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(out.eTag));
 			fCurrentEntity->animation() = fAssets->getAnimation(out.aTag);
 			fCurrentEntity->movement().position = {static_cast<float>(out.x), static_cast<float>(out.y)};
@@ -320,34 +362,44 @@ void App::loadLevel() {
 			fInterface->setLayer(out.layer);
 
 			fEntityVector.push_back(fCurrentEntity);
+			*/
 		}
 
 		file.close();
 
-		fInterface->load() = false;
+		load = false;
+
+		// Change this
+		//fCurrentEntity = fEntityVector[0];
 	}
 }
 
 void App::setTextSetting() {
-	if(!fFont.loadFromFile("/home/cristmor/dev/cpp/LevelMaker/deps/imgui/misc/fonts/Roboto-Medium.ttf")) {
+	static sf::Font& font = AppState::getInstance().font();
+	static sf::Text& textPosition = AppState::getInstance().textPosition();
+	if(!font.loadFromFile("/home/cristmor/dev/cpp/LevelMaker/deps/imgui/misc/fonts/Roboto-Medium.ttf")) {
 		std::cerr << "Error: Unable to font" << std::endl; 
 	}
 
-	fTextPosition.setFont(fFont);
-	fTextPosition.setString("test");
-	fTextPosition.setCharacterSize(12);
-	fTextPosition.setFillColor(sf::Color::White);
-	fTextPosition.setPosition(200.0f, 200.0f);
+	textPosition.setFont(font);
+	textPosition.setString("test");
+	textPosition.setCharacterSize(12);
+	textPosition.setFillColor(sf::Color::White);
+	textPosition.setPosition(200.0f, 200.0f);
 }
 
 void App::sortEntitiesByLayer() {
-	for(size_t x = 0;x < fEntityVector.size(); x++) {
-		for(size_t y = 0; y < fEntityVector.size() - 1;y++) {
+	// Change this
+	static const EntityVector& entities = GameState::getInstance().entityManager().entities();
+	for(size_t x = 0;x < entities.size(); x++) {
+		for(size_t y = 0; y < entities.size() - 1;y++) {
+			/*
 			if(fEntityVector[y]->animation().layer() > fEntityVector[y+1]->animation().layer()) {
 				std::shared_ptr<Entity> temp = fEntityVector[y];
 				fEntityVector[y] = fEntityVector[y+1];
 				fEntityVector[y+1] = temp;
 			}
+			*/
 		}
 	}
 }

@@ -1,39 +1,24 @@
-#include "Entity.h"
+#include "Entity.hpp"
 
-Entity::Entity() {}
-
-Entity::Entity(const std::string& tag, const Animation& animation, const Vec2& position, const Vec2& velocity, const Vec2& size, const std::string& state):
-	fTag(tag),
-	fAnimation(animation),
-	fMovement(position, velocity),
-	fBoundingBox(size),
-	fState(state) {
-	fInput = Input();
+Entity::Entity(std::string tag, size_t id, const sf::Vector2f& position, const sf::Vector2f& speed, const Animation& animation, short int l, bool c):
+	mTag(tag),
+	mID(id),
+	mPosition(position),
+	mPrevPosition(position),
+	mSpeed(speed),
+	mAnimation(animation),
+	layer(l),
+	collidable(c) {
+	update();
 }
 
 // Public
-
-Animation& Entity::animation() {
-	return fAnimation;
+void Entity::update() {
+	mAnimation.update();
+	mAnimation.setPosition(mPosition);
 }
 
-Movement& Entity::movement() {
-	return fMovement;
+void Entity::setPosition(const sf::Vector2f& newPosition) {
+	mPrevPosition = mPosition;
+	mPosition = newPosition;
 }
-
-BoundingBox& Entity::boundingBox() {
-	return fBoundingBox;
-}
-
-State& Entity::state() {
-	return fState;
-}
-
-Input& Entity::input() {
-	return fInput;
-}
-
-std::string& Entity::tag() {
-	return fTag;
-}
-

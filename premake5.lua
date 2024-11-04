@@ -10,7 +10,7 @@ targetdir("bin/%{cfg.buildcfg}")
 objdir("bin/")
 
 files({
-	"src/**.h",
+	"src/**.hpp",
 	"src/**.cpp",
 	"deps/imgui/**.cpp",
 	"deps/imgui/**.h",
