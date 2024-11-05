@@ -3,48 +3,6 @@
 #include "GameState.hpp"
 
 App::App() {
-	mAssets = std::make_shared<Assets>();
-	//fWindow = std::make_shared<sf::RenderWindow>(sf::VideoMode(WINDOW_SIZE_X, WINDOW_SIZE_Y), WINDOW_TITLE);
-	//fOutput.open(OUTPUT_FILENAME);
-
-	/*
-	for(int x = 0; x <= WINDOW_SIZE_X; x += (16 * SCALE)) {
-		for(int y = 0; y <= WINDOW_SIZE_Y; y += (16 * SCALE)) {
-			sf::RectangleShape rect;
-			rect.setPosition(0, 0);
-			rect.setSize({static_cast<float>(x), static_cast<float>(y)});
-			rect.setFillColor({0, 0, 0, 0});
-			rect.setOutlineColor(sf::Color::White);
-			rect.setOutlineThickness(2);
-			fRectangleVector.push_back(rect);
-		}
-	}
-
-	sf::VertexArray vertices(sf::Lines);
-	int RECT_SIZE = (16 * SCALE);
-	for (int x = 0; x <= WINDOW_SIZE_X; x += RECT_SIZE) {
-		for (int y = 0; y <= WINDOW_SIZE_Y; y += RECT_SIZE) {
-			sf::Vector2f topLeft(static_cast<float>(x), static_cast<float>(y));
-			sf::Vector2f bottomRight(topLeft.x + RECT_SIZE, topLeft.y + RECT_SIZE);
-
-			// Add the four lines (outline) of each rectangle
-			vertices.append(sf::Vertex(topLeft, sf::Color::White));
-			vertices.append(sf::Vertex({bottomRight.x, topLeft.y}, sf::Color::White));
-
-			vertices.append(sf::Vertex({bottomRight.x, topLeft.y}, sf::Color::White));
-			vertices.append(sf::Vertex(bottomRight, sf::Color::White));
-
-			vertices.append(sf::Vertex(bottomRight, sf::Color::White));
-			vertices.append(sf::Vertex({topLeft.x, bottomRight.y}, sf::Color::White));
-
-			vertices.append(sf::Vertex({topLeft.x, bottomRight.y}, sf::Color::White));
-			vertices.append(sf::Vertex(topLeft, sf::Color::White));
-		}
-	}
-
-	fGrid = vertices;
-	*/
-
 	setTextSetting();
 }
 
@@ -63,7 +21,7 @@ void App::run() {
 	while(window.isOpen()) {
 		mousePosition = sf::Mouse::getPosition(window);
 
-		mInterface.whileRun();
+		mInterface.update();
 
 		inputs();
 		movements();
@@ -75,7 +33,6 @@ void App::run() {
 		loadLevel();
 
 		sf::View view = window.getView();
-
 		view.setCenter(cameraPosition.x, cameraPosition.y);
 		window.setView(view);
 
@@ -112,7 +69,7 @@ void App::run() {
 		    }
 		}
 
-		grid= vertices;
+		grid = vertices;
 	}
 }
 
@@ -131,6 +88,7 @@ void App::render() {
 	if(showGrid) {
 		window.draw(grid);
 	}
+
 	for(auto& entity : entities) {
 		if(entity->tag() != "") {
 			/*
@@ -141,6 +99,7 @@ void App::render() {
 			*/
 		}
 	}
+
 	if(followMouse) {
 		window.draw(textPosition);
 	}
@@ -159,7 +118,7 @@ void App::inputs() {
 
 	sf::Event event;
 	while(window.pollEvent(event)) {
-		mInterface.events(event);
+		ImGui::SFML::ProcessEvent(window, event);
 		if(event.type == sf::Event::Closed) {
 			output.close();
 			window.close();

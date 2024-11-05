@@ -10,24 +10,15 @@
 // Project
 #include "AppState.hpp"
 #include "GameState.hpp"
-#include "Assets.hpp"
 
 class Assets;
 
 class Interface {
 public:
 	Interface();
+	~Interface();
 
-	void whileRun();
-	void render();
-	void events(const sf::Event& event);
-
-	void pathUI();
-	void mousePositionUI();
-	void entitySelectorUI();
-	void animationSelectorUI();
-	void moveEntityUI();
-	void saveUI();
+	void update();
 
 private:
 	sf::Clock mClock;

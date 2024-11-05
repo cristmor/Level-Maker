@@ -4,6 +4,7 @@
 #include "GameState.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "SFML/System/Vector2.hpp"
+#include "imgui.h"
 
 Interface::Interface() {
 	static sf::RenderWindow& window = GameState::getInstance().window();
@@ -12,15 +13,20 @@ Interface::Interface() {
 	}
 }
 
+Interface::~Interface() {
+	ImGui::SFML::Shutdown();
+}
+
 // Public
-void Interface::whileRun() {
-	// move this to App.hpp
-	//mousePosition = sf::Mouse::getPosition(*fWindow);
+void Interface::update() {
 	static sf::RenderWindow& window = GameState::getInstance().window();
 	static sf::Vector2i& mousePosition = AppState::getInstance().mousePosition();
+	static sf::Vector2i& cameraPosition = AppState::getInstance().cameraPosition();
+	static std::string& entityTag = AppState::getInstance().entityTag();
 
 	ImGui::SFML::Update(window, mClock.restart());
 	ImGui::SetNextWindowSize({400, 600});
+	ImGui::SetNextWindowPos({WINDOW_SIZE_X - 400, 0});
 	ImGui::Begin("Level Editor");
 
 	// UI Elements
@@ -34,49 +40,22 @@ void Interface::whileRun() {
 	ImGui::Text(label, IM_ARRAYSIZE(label));
 
 	// Window and Mouse Position
-	//auto windowPosition = fWindow->getView().getCenter();
-	//ImGui::Text("Window Position: (%d, %d)\n", static_cast<int>(windowPosition.x), static_cast<int>(windowPosition.y));
+	auto windowPosition = window.getView().getCenter();
+	ImGui::Text("Window Position: (%d, %d)\n", static_cast<int>(windowPosition.x), static_cast<int>(windowPosition.y));
+	ImGui::SameLine();
+	if(ImGui::Button("Reset")) {
+		cameraPosition = {0, 0};
+	}
 	ImGui::Text("Mouse Position: (%d, %d)\n", mousePosition.x, mousePosition.y);
 
 
-	mousePositionUI();
+	//mousePositionUI();
 	ImGui::SeparatorText("Entity Selection");
-	entitySelectorUI();
-	animationSelectorUI();
-	ImGui::SeparatorText("Test");
-	moveEntityUI();
-	saveUI();
 
-	ImGui::End();
-}
-
-void Interface::render() {
-	//ImGui::SFML::Render(*fWindow);
-}
-
-void Interface::events(const sf::Event& event) {
-	//ImGui::SFML::ProcessEvent(*fWindow, event);
-}
-
-// Public UI Componets
-void Interface::pathUI() {
-
-}
-
-void Interface::mousePositionUI() {
-}
-
-void Interface::entitySelectorUI() {
-	//static std::vector<std::string> list = fAssets->listEntityTags();
-	static std::vector<const char*> listChar;
-	static int index = 0;
-	/*
-	if(listChar.empty()) {
-		for(std::string& tag: list) {
-			listChar.push_back(tag.c_str());
-		}
-	}
-*/
+	static std::vector<const char*>& entityList = AppState::getInstance().filenamesChar();
+	static std::vector<const char*> animationList = AppState::getInstance().animationList(entityTag);
+	static int eIndex = 0;
+	static int aIndex = 0;
 
 	/*
 	if(fEntityTag != "" and fEntityTag != list[index]) {
@@ -89,25 +68,20 @@ void Interface::entitySelectorUI() {
 */
 
 
-	if(!listChar.empty()) {
+	//if(!listChar.empty()) {
 
 	//	if(ImGui::Combo("Select Entity", &index, listChar.data(), listChar.size())) {
 	//		fEntityTag = list[index];
 	//	}
-		if(ImGui::ListBox("Select Entity", &index, listChar.data(), listChar.size())) {
-			/*
-			fEntityTag = list[index];
-			fCreateEntity = true;
-			*/
+		if(ImGui::ListBox("Select Entity", &eIndex, entityList.data(), entityList.size())) {
+			entityTag = entityList[eIndex];
+			animationList = AppState::getInstance().animationList(entityTag);
+			//fCreateEntity = true;
 		}
-	}
-}
+	//}
 
-void Interface::animationSelectorUI() {
-	static std::vector<std::string> list;
-	static std::vector<const char*> listChar;
 	//static std::string prevEntityTag = fEntityTag;
-	static int index = 0;
+	//static int index = 0;
 	/*
 	if(fEntityTag != prevEntityTag) {
 		listChar.clear();
@@ -130,16 +104,16 @@ void Interface::animationSelectorUI() {
 */
 
 
-	if(!listChar.empty()) {
-		ImGui::ListBox("Select Animation", &index, listChar.data(), listChar.size());
+	//if(!listChar.empty()) {
+		if(ImGui::ListBox("Select Animation", &aIndex, animationList.data(), animationList.size())) {
+		}
 //		fAnimationTag = list[index];
-	}
+	//}
 
 //	ImGui::InputInt("Layer", &fLayer);
 
-}
-
-void Interface::moveEntityUI() {
+	//animationSelectorUI();
+	ImGui::SeparatorText("Test");
 	static bool& followMouse = AppState::getInstance().followMouse();
 	static bool& snapGrid = AppState::getInstance().snapGrid();
 	static bool& showGrid = AppState::getInstance().showGrid();
@@ -151,9 +125,7 @@ void Interface::moveEntityUI() {
 	if(ImGui::Button("Delete")) {
 		deleteEntity = true;
 	}
-}
 
-void Interface::saveUI() {
 	static std::string& filename = AppState::getInstance().filename();
 	static bool& save = AppState::getInstance().save();
 	static bool& load = AppState::getInstance().load();
@@ -171,6 +143,8 @@ void Interface::saveUI() {
 	if(ImGui::Button("Load")) {
 		save = true;
 	}
+
+	ImGui::End();
 }
 
 // Private

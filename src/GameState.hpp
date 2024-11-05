@@ -5,8 +5,8 @@
 #include "EntityManager.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
 
-const size_t WINDOW_SIZE_X = 800;
-const size_t WINDOW_SIZE_Y = 600;
+const size_t WINDOW_SIZE_X = 1280;
+const size_t WINDOW_SIZE_Y = 720;
 const std::string WINDOW_TITLE = "Level Maker";
 
 class GameState {

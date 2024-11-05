@@ -40,6 +40,8 @@ public:
 
 	const Animation& getAnimation(std::string tag) { return mAnimationMap[tag]; }
 
+	const AnimationMap& getAnimationMap() { return mAnimationMap; }
+
 private:
 	void addTexture(std::string tag, std::string path);
 

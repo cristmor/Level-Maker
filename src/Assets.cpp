@@ -2,7 +2,7 @@
 #include <iostream>
 
 Assets::Assets() {
-	std::ifstream file("/home/cristmor/dev/cpp/SpriteCapture/Output.txt");
+	std::ifstream file("/home/cristmor/dev/cpp/SpriteCapture/data.txt");
 
 	AssetData d;
 	while(file.good()) {
