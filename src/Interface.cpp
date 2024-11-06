@@ -22,7 +22,6 @@ void Interface::update() {
 	static sf::RenderWindow& window = GameState::getInstance().window();
 	static sf::Vector2i& mousePosition = AppState::getInstance().mousePosition();
 	static sf::Vector2i& cameraPosition = AppState::getInstance().cameraPosition();
-	static std::string& entityTag = AppState::getInstance().entityTag();
 
 	ImGui::SFML::Update(window, mClock.restart());
 	ImGui::SetNextWindowSize({400, 600});
@@ -50,11 +49,16 @@ void Interface::update() {
 
 
 	//mousePositionUI();
+
 	ImGui::SeparatorText("Entity Selection");
+
+	static std::string& entityTag = AppState::getInstance().entityTag();
+	static std::string& animationTag = AppState::getInstance().animtionTag();
+	static bool& newEntity = AppState::getInstance().newEntity();
 
 	static std::vector<const char*>& entityList = AppState::getInstance().filenamesChar();
 	static std::vector<const char*> animationList = AppState::getInstance().animationList(entityTag);
-	static int eIndex = 0;
+	static int eIndex = 11;
 	static int aIndex = 0;
 
 	/*
@@ -74,10 +78,11 @@ void Interface::update() {
 	//		fEntityTag = list[index];
 	//	}
 		if(ImGui::ListBox("Select Entity", &eIndex, entityList.data(), entityList.size())) {
-			entityTag = entityList[eIndex];
 			animationList = AppState::getInstance().animationList(entityTag);
-			//fCreateEntity = true;
+			aIndex = 0;
+			newEntity = true;
 		}
+		entityTag = entityList[eIndex];
 	//}
 
 	//static std::string prevEntityTag = fEntityTag;
@@ -107,6 +112,8 @@ void Interface::update() {
 	//if(!listChar.empty()) {
 		if(ImGui::ListBox("Select Animation", &aIndex, animationList.data(), animationList.size())) {
 		}
+		animationTag = animationList[aIndex];
+
 //		fAnimationTag = list[index];
 	//}
 

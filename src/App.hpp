@@ -11,17 +11,15 @@
 #include <imgui-SFML.h>
 
 // Project
+#include "Renderer.hpp"
 #include "Interface.hpp"
-#include "Assets.hpp"
-#include "Entity.hpp"
 #include "GameState.hpp"
 #include "AppState.hpp"
 
 const std::string OUTPUT_FILENAME = "level.txt";
 
 class Interface;
-class Assets;
-class Entity;
+class Renderer;
 
 class App {
 public:
@@ -48,7 +46,7 @@ private:
 
 	
 	Interface mInterface{};
-	std::shared_ptr<Assets> mAssets;
 
+	Renderer mRenderer{};
 	// std::vector<sf::RectangleShape> fRectangleVector;
 };
