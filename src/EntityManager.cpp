@@ -1,4 +1,5 @@
 #include "EntityManager.hpp"
+#include <memory>
 
 // public
 std::shared_ptr<Entity> EntityManager::addEntity(std::string tag ,const sf::Vector2f& position, const sf::Vector2f& speed, const Animation& animation, short int l, bool c) {
@@ -11,7 +12,7 @@ std::shared_ptr<Entity> EntityManager::addEntity(std::string tag ,const sf::Vect
 }
 
 void EntityManager::deleteEntity(std::string tag, size_t id) {
-	mEntityVector[id] = std::make_shared<Entity>();
+	mEntityVector[id] = nullptr;
 
 	/*
 	if(mEntityMap.find(tag) != mEntityMap.end()) {

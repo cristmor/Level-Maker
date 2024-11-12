@@ -30,8 +30,6 @@ void App::run() {
 		render();
 
 		setEntity();
-		setAnimation();
-		setLayer();
 		saveLevel();
 		loadLevel();
 
@@ -192,6 +190,7 @@ void App::setEntity() {
 	static Assets& assets = GameState::getInstance().assets();
 
 	static bool& newEntity = AppState::getInstance().newEntity();
+	static bool& deleteEntity = AppState::getInstance().deleteEntity();
 	static std::string& entityTag = AppState::getInstance().entityTag();
 	static std::string& animationTag = AppState::getInstance().animtionTag();
 	static int& layer = AppState::getInstance().layer();
@@ -202,70 +201,70 @@ void App::setEntity() {
 	if(newEntity) {
 		newEntity = false;
 		followMouse = true;
-
 		currentEntity = entityManager.addEntity(entityTag, { 0, 0 }, { 0, 0 }, assets.getAnimation(animationTag));
 		currentEntity->layer = layer;
 	}
 
-	/*
-	if (fInterface->deleteEntity()) {
-		for (int i = 0;i < fEntityVector.size();i++) {
-			if (fCurrentEntity == fEntityVector[i]) {
-				fEntityVector.erase(fEntityVector.begin() + i);
+	if (deleteEntity) {
+		if(entityManager.entities().size()) {
+			// may need to change this
+			entityManager.deleteEntity("", currentEntity->copyNo());
+			std::cout << "entities.size():" << entityManager.entities().size() << std::endl;
+			for(size_t i = entityManager.entities().size() - 1;i > 0;i--) {
+				if(entityManager.entities()[i]) {
+					currentEntity = entityManager.entities()[i];
+					break;
+				}
+				else {
+					currentEntity = std::make_shared<Entity>();
+					followMouse = false;
+				}
 			}
-		}
-		if(fEntityVector.size()) {
-			fCurrentEntity = fEntityVector.back();
-			fInterface->setEntityTag(fCurrentEntity->tag());
-			fInterface->setAnimationTag(fCurrentEntity->animation().tag());
+			
+			entityTag = currentEntity->tag();
+			animationTag = currentEntity->animationTag();
 		}
 		else {
-			fCurrentEntity = std::make_shared<Entity>();
-			fInterface->followMouse() = false;
+			currentEntity = std::make_shared<Entity>();
+			followMouse = false;
 		}
-		fInterface->deleteEntity() = false;
+		deleteEntity = false;
 	}
-	*/
+
 	if(currentEntity) {
 		if(currentEntity->animationTag() != animationTag) {
-			std::cout << "change" << std::endl;
 			currentEntity->setAnimation(assets.getAnimation(animationTag));
 		}
+		if(currentEntity->layer != layer) {
+			currentEntity->layer = layer;
+		}
 	}
-}
-
-void App::setAnimation() {
-	/*
-	if(fCurrentEntity && fInterface->getAnimation() != fCurrentEntity->animation().tag()) {
-		fCurrentEntity->animation() = fAssets->getAnimation(fInterface->getAnimation());
-	}
-	*/
-}
-
-void App::setLayer() {
-	/*
-	if(fCurrentEntity && fInterface->layer() != fCurrentEntity->animation().layer()) {
-		//fCurrentEntity->animation().layer() = fInterface->layer();
-	}
-	*/
 }
 
 void App::selectEntity() {
 	static const EntityVector& entities = GameState::getInstance().entityManager().entities();
+
+	static const sf::Vector2i& mousePosition = AppState::getInstance().mousePosition();
+	static std::shared_ptr<Entity>& currentEntity = AppState::getInstance().currentEntity();
+	static bool& followMouse = AppState::getInstance().followMouse();
+	static std::string& entityTag = AppState::getInstance().entityTag();
+	static std::string& animationTag = AppState::getInstance().animtionTag();
+	static int& layer = AppState::getInstance().layer();
+
 	for(auto& entity: entities) {
 		if(entity) {
-			/*
-			auto entityBB = entity->boundingBox().halfSize;
-			auto entityP = entity->movement().position;
-			if(fMousePosition.x >= (entityP.x - entityBB.x) && fMousePosition.x <= (entityBB.x + entityP.x) &&
-			   fMousePosition.y >= (entityP.y - entityBB.y) && fMousePosition.y <= (entityBB.y + entityP.y)) {
-				fCurrentEntity = entity;
-				fInterface->followMouse() = true;
-				fInterface->setEntityTag(fCurrentEntity->tag());
-				fInterface->setAnimationTag(fCurrentEntity->animation().tag());
-				fInterface->setLayer(fCurrentEntity->animation().layer());
+			auto entityBB = entity->boundingBox(); // need for half-Size
+			auto entityP = entity->position();
+			if(mousePosition.x >= (entityP.x - entityBB.x) && mousePosition.x <= (entityBB.x + entityP.x) &&
+			   mousePosition.y >= (entityP.y - entityBB.y) && mousePosition.y <= (entityBB.y + entityP.y)) {
+				currentEntity = entity;
+				followMouse = true;
+				// May need to change this
+				entityTag = currentEntity->tag();
+				animationTag = currentEntity->animationTag();
+				layer = currentEntity->layer;
+				std::cout << "id:" << currentEntity->copyNo()  << std::endl;
 			}
-			*/
 		}
 	}
 }
@@ -365,15 +364,15 @@ void App::setTextSetting() {
 void App::sortEntitiesByLayer() {
 	// Change this
 	static const EntityVector& entities = GameState::getInstance().entityManager().entities();
+	/*
 	for(size_t x = 0;x < entities.size(); x++) {
 		for(size_t y = 0; y < entities.size() - 1;y++) {
-			/*
 			if(fEntityVector[y]->animation().layer() > fEntityVector[y+1]->animation().layer()) {
 				std::shared_ptr<Entity> temp = fEntityVector[y];
 				fEntityVector[y] = fEntityVector[y+1];
 				fEntityVector[y+1] = temp;
 			}
-			*/
 		}
 	}
+	*/
 }

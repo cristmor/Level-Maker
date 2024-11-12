@@ -32,6 +32,7 @@ void Interface::update() {
 
 	// Path
 	ImGui::SeparatorText("Basic Information");
+
 	static std::string str = "Level path: " + OUTPUT_FILENAME;
 	static int strSize = str.size() + 1;
 	char label[20];

@@ -33,8 +33,6 @@ private:
 	void movements();
 
 	void setEntity();
-	void setAnimation();
-	void setLayer();
 	void selectEntity();
 
 	void saveLevel();
