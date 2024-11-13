@@ -149,7 +149,7 @@ void Interface::update() {
 	}
 	ImGui::SameLine();
 	if(ImGui::Button("Load")) {
-		save = true;
+		load = true;
 	}
 
 	ImGui::End();

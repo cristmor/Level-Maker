@@ -1,7 +1,9 @@
 #include "App.hpp"
+#include "Assets.hpp"
 #include "EntityManager.hpp"
 #include "GameState.hpp"
 #include "SFML/Graphics/Text.hpp"
+#include "SFML/System/Vector2.hpp"
 #include <exception>
 
 App::App() {
@@ -43,8 +45,8 @@ void App::run() {
 
 
 		// Looping through, but starting relative to the center position
-		for (int x = cameraPosition.x - (WINDOW_SIZE_X / 2.0) - (SCALE * 32); x <= cameraPosition.x + (WINDOW_SIZE_X / 2.0) + (SCALE * 32); x += RECT_SIZE) {
-		    for (int y = cameraPosition.y - (WINDOW_SIZE_Y / 2.0) - (SCALE * 32); y <= cameraPosition.y + (WINDOW_SIZE_Y / 2.0) +(SCALE * 32); y += RECT_SIZE) {
+		for (int x = cameraPosition.x - (WINDOW_SIZE_X / 2.0) - (SCALE * 32); x <= cameraPosition.x + (WINDOW_SIZE_X) + (SCALE * 32); x += RECT_SIZE) {
+		    for (int y = cameraPosition.y - (WINDOW_SIZE_Y / 2.0) - (SCALE * 32); y <= cameraPosition.y + (WINDOW_SIZE_Y) + (SCALE * 32); y += RECT_SIZE) {
 			sf::Vector2f topLeft(static_cast<float>(x), static_cast<float>(y));
 			sf::Vector2f bottomRight(topLeft.x + RECT_SIZE, topLeft.y + RECT_SIZE);
 
@@ -139,19 +141,19 @@ void App::inputs() {
 		*/
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-		cameraPosition += { 0, -1 };
+		cameraPosition += { 0, -5 };
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-		cameraPosition += { 0, 1 };
+		cameraPosition += { 0, 5 };
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-		cameraPosition += { -1, 0 };
+		cameraPosition += { -5, 0 };
 	}
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-		cameraPosition += { 1, 0 };
+		cameraPosition += { 5, 0 };
 	}
 }
 
@@ -159,6 +161,7 @@ void App::movements() {
 	static sf::Text& textPosition = AppState::getInstance().textPosition();
 	static sf::Vector2i& mousePosition = AppState::getInstance().mousePosition();
 	static bool& snapGrid = AppState::getInstance().snapGrid();
+	static sf::Vector2i& cameraPosition = AppState::getInstance().cameraPosition();
 
 	static bool& followMouse = AppState::getInstance().followMouse();
 	static std::shared_ptr<Entity>& currentEntity = AppState::getInstance().currentEntity();
@@ -172,7 +175,7 @@ void App::movements() {
 		auto& entityBB = currentEntity->boundingBox();
 		auto textBB = textPosition.getGlobalBounds().getSize();
 
-		auto newPosition = mousePosition;
+		auto newPosition = mousePosition + cameraPosition;
 
 		if(snapGrid) {
 			newPosition.x = newPosition.x + (16 * SCALE)/2 - (newPosition.x%static_cast<int>(16 * SCALE));
@@ -245,18 +248,21 @@ void App::selectEntity() {
 	static const EntityVector& entities = GameState::getInstance().entityManager().entities();
 
 	static const sf::Vector2i& mousePosition = AppState::getInstance().mousePosition();
+	static sf::Vector2i& cameraPosition = AppState::getInstance().cameraPosition();
 	static std::shared_ptr<Entity>& currentEntity = AppState::getInstance().currentEntity();
 	static bool& followMouse = AppState::getInstance().followMouse();
 	static std::string& entityTag = AppState::getInstance().entityTag();
 	static std::string& animationTag = AppState::getInstance().animtionTag();
 	static int& layer = AppState::getInstance().layer();
 
+	auto newMousePosition = mousePosition + cameraPosition;
+
 	for(auto& entity: entities) {
 		if(entity) {
 			auto entityBB = entity->boundingBox(); // need for half-Size
 			auto entityP = entity->position();
-			if(mousePosition.x >= (entityP.x - entityBB.x) && mousePosition.x <= (entityBB.x + entityP.x) &&
-			   mousePosition.y >= (entityP.y - entityBB.y) && mousePosition.y <= (entityBB.y + entityP.y)) {
+			if(newMousePosition.x >= (entityP.x - entityBB.x) && newMousePosition.x <= (entityBB.x + entityP.x) &&
+			   newMousePosition.y >= (entityP.y - entityBB.y) && newMousePosition.y <= (entityBB.y + entityP.y)) {
 				currentEntity = entity;
 				followMouse = true;
 				// May need to change this
@@ -281,19 +287,17 @@ void App::saveLevel() {
 		file.open(filename);
 
 		for(auto& entity : entities) {
-			/*
-			file << entity->movement().position.x << " "
-				<< entity->movement().position.y << " "
+			file << entity->position().x << " "
+				<< entity->position().y << " "
 				<< entity->tag() << " "
-				<< entity->animation().tag() << " "
-				<< entity->animation().layer() << std::endl;
+				<< entity->animationTag() << " "
+				<< entity->layer << std::endl;
 
-			std::cout << entity->movement().position.x << " "
-				<< entity->movement().position.y << " "
+			std::cout << entity->position().x << " "
+				<< entity->position().y << " "
 				<< entity->tag() << " "
-				<< entity->animation().tag() << " "
-				<< entity->animation().layer() << std::endl;
-			*/
+				<< entity->animationTag() << " "
+				<< entity->layer << std::endl;
 		}
 
 		file.close();
@@ -303,6 +307,9 @@ void App::saveLevel() {
 }
 
 void App::loadLevel() {
+	static EntityManager& entityManager = GameState::getInstance().entityManager();
+	static Assets& assets = GameState::getInstance().assets();
+
 	static bool& load = AppState::getInstance().load();
 	static std::string& filename = AppState::getInstance().filename();
 	static std::shared_ptr<Entity>& currentEntity = AppState::getInstance().currentEntity();
@@ -325,18 +332,9 @@ void App::loadLevel() {
 				<< out.layer << " "
 				<< std::endl;
 
-
-			/*
-			fCurrentEntity = std::make_shared<Entity>(fAssets->getEntity(out.eTag));
-			fCurrentEntity->animation() = fAssets->getAnimation(out.aTag);
-			fCurrentEntity->movement().position = {static_cast<float>(out.x), static_cast<float>(out.y)};
-			fCurrentEntity->movement().prevPosition = fCurrentEntity->movement().position;
-			fCurrentEntity->animation().layer() = out.layer;
-			fInterface->setLayer(out.layer);
-
-			fEntityVector.push_back(fCurrentEntity);
-			*/
+			entityManager.addEntity(out.eTag, { out.x, out.y }, { 0, 0}, assets.getAnimation(out.aTag), out.layer, false);
 		}
+		currentEntity = entityManager.entities().back();
 
 		file.close();
 

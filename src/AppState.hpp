@@ -14,8 +14,8 @@
 #include "Entity.hpp"
 
 struct Output {
-	int x;
-	int y;
+	float x;
+	float y;
 	std::string eTag;
 	std::string aTag;
 	int layer;
