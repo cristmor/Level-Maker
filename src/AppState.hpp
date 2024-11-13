@@ -35,9 +35,6 @@ public:
 
 	sf::Vector2i& mousePosition() { return mMousePosition; }
 	sf::Vector2i& cameraPosition() { return mCameraPosition; }
-	sf::VertexArray& grid() { return mGrid; }
-	sf::Text& textPosition() { return mTextPosition; }
-	sf::Font& font() { return mFont; }
 
 	std::ofstream& output() { return mOutput; }
 
@@ -45,7 +42,6 @@ public:
 	std::string& filename() { return mFilename; }
 	std::string& entityTag() { return mEntityTag; }
 	std::string& animtionTag() { return mAnimationTag; }
-	std::shared_ptr<Entity>& currentEntity() { return mCurrentEntity; }
 
 	int& layer() { return mLayer; }
 	bool& followMouse() { return mFollowMouse;}
@@ -61,9 +57,6 @@ public:
 private:
 	sf::Vector2i mMousePosition;
 	sf::Vector2i mCameraPosition;
-	sf::VertexArray mGrid;
-	sf::Text mTextPosition;
-	sf::Font mFont;
 
 	std::ofstream mOutput;
 	std::vector<std::filesystem::path> mPaths;
@@ -73,9 +66,8 @@ private:
 	std::string mAssetPath = "/home/cristmor/dev/cpp/SpriteCapture/deps/assets/sprites/";
 	std::string mFilename = "test.txt";
 	std::string mEntityTag = "player";
-	std::vector<std::string> mAnimationList;
 	std::string mAnimationTag = "";
-	std::shared_ptr<Entity> mCurrentEntity;
+	std::vector<std::string> mAnimationList;
 
 	int mLayer = 1;
 	bool mFollowMouse = false;

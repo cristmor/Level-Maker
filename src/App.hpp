@@ -28,23 +28,16 @@ public:
 
 	void run();
 private:
-	void render(); 
-	void inputs();
-	void movements();
-
-	void setEntity();
 	void selectEntity();
-
-	void saveLevel();
-	void loadLevel();
-
-	void setTextSetting();
-
 	void sortEntitiesByLayer();
-
 	
 	Interface mInterface{};
-
 	Renderer mRenderer{};
+
+	sf::VertexArray mGrid;
+	std::shared_ptr<Entity> mCurrentEntity;
+	sf::Font mFont;
+	sf::Text mTextPosition;
+
 	// std::vector<sf::RectangleShape> fRectangleVector;
 };
