@@ -1,5 +1,4 @@
 #include "Assets.hpp"
-#include <iostream>
 
 Assets::Assets() {
 	std::ifstream file("/home/cristmor/dev/cpp/SpriteCapture/data.txt");

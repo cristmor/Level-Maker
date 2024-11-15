@@ -38,7 +38,6 @@ public:
 
 	std::ofstream& output() { return mOutput; }
 
-	std::vector<const char*>& filenamesChar() { return mFilenamesChar;}
 	std::string& filename() { return mFilename; }
 	std::string& entityTag() { return mEntityTag; }
 	std::string& animtionTag() { return mAnimationTag; }
@@ -53,21 +52,21 @@ public:
 	bool& load() { return mLoad; }
 
 	std::vector<const char*> animationList(std::string tag);
+	std::vector<const char*> textureList();
 
 private:
 	sf::Vector2i mMousePosition;
 	sf::Vector2i mCameraPosition;
 
 	std::ofstream mOutput;
-	std::vector<std::filesystem::path> mPaths;
-	std::vector<std::string> mFilenames;
-	std::vector<const char*> mFilenamesChar;
 
 	std::string mAssetPath = "/home/cristmor/dev/cpp/SpriteCapture/deps/assets/sprites/";
 	std::string mFilename = "test.txt";
 	std::string mEntityTag = "player";
 	std::string mAnimationTag = "";
+
 	std::vector<std::string> mAnimationList;
+	std::vector<std::string> mTextureList;
 
 	int mLayer = 1;
 	bool mFollowMouse = false;

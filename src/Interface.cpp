@@ -48,7 +48,6 @@ void Interface::update() {
 	}
 	ImGui::Text("Mouse Position: (%d, %d)\n", mousePosition.x, mousePosition.y);
 
-
 	//mousePositionUI();
 
 	ImGui::SeparatorText("Entity Selection");
@@ -56,83 +55,45 @@ void Interface::update() {
 	static std::string& entityTag = AppState::getInstance().entityTag();
 	static std::string& animationTag = AppState::getInstance().animtionTag();
 	static bool& newEntity = AppState::getInstance().newEntity();
+	static bool& deleteEntity = AppState::getInstance().deleteEntity();
 
-	static std::vector<const char*>& entityList = AppState::getInstance().filenamesChar();
-	static std::vector<const char*> animationList = AppState::getInstance().animationList(entityTag);
-	static int eIndex = 11;
+	static int eIndex = 0;
 	static int aIndex = 0;
+	static std::vector<const char*> entityList = AppState::getInstance().textureList();
+	static std::vector<const char*> animationList = AppState::getInstance().animationList(entityList[aIndex]);
 
-	/*
-	if(fEntityTag != "" and fEntityTag != list[index]) {
-		for(int i = 0;i < list.size();i++) {
-			if(fEntityTag == list[i]) {
-				index = i;
-			}
-		}
+	if(ImGui::ListBox("Select Entity", &eIndex, entityList.data(), entityList.size())) {
+		animationList = AppState::getInstance().animationList(entityList[eIndex]);
+		aIndex = 0;
 	}
-*/
+	entityTag = entityList[eIndex];
 
-
-	//if(!listChar.empty()) {
-
-	//	if(ImGui::Combo("Select Entity", &index, listChar.data(), listChar.size())) {
-	//		fEntityTag = list[index];
-	//	}
-		if(ImGui::ListBox("Select Entity", &eIndex, entityList.data(), entityList.size())) {
-			animationList = AppState::getInstance().animationList(entityTag);
-			aIndex = 0;
-			newEntity = true;
-		}
-		entityTag = entityList[eIndex];
-	//}
-
-	//static std::string prevEntityTag = fEntityTag;
-	//static int index = 0;
-	/*
-	if(fEntityTag != prevEntityTag) {
-		listChar.clear();
-		list = fAssets->listAnimationTags(fEntityTag);
-		for(std::string& tag: list) {
-			listChar.push_back(tag.c_str());
-		}
-		prevEntityTag = fEntityTag;
-	}
-	*/
-
-	/*
-	if(fAnimationTag!= "" and fAnimationTag != list[index]) {
-		for(int i = 0;i < list.size();i++) {
-			if(fAnimationTag == list[i]) {
-				index = i;
-			}
-		}
-	}
-*/
-
-
-	//if(!listChar.empty()) {
-		if(ImGui::ListBox("Select Animation", &aIndex, animationList.data(), animationList.size())) {
-		}
+	ImGui::BeginDisabled(!animationList.size());
+	ImGui::ListBox("Select Animation", &aIndex, animationList.data(), animationList.size());
+	ImGui::EndDisabled();
+	if(animationList.size()) {
 		animationTag = animationList[aIndex];
+	}
 
-//		fAnimationTag = list[index];
-	//}
+	if(ImGui::Button("Create")) {
+		newEntity = true;
+	}
+	ImGui::SameLine();
+	if(ImGui::Button("Delete")) {
+		deleteEntity = true;
+	}
 
-//	ImGui::InputInt("Layer", &fLayer);
-
-	//animationSelectorUI();
-	ImGui::SeparatorText("Test");
+	//
+	// animationSelectorUI();
+	//
+	ImGui::SeparatorText("Placement Options");
 	static bool& followMouse = AppState::getInstance().followMouse();
 	static bool& snapGrid = AppState::getInstance().snapGrid();
 	static bool& showGrid = AppState::getInstance().showGrid();
-	static bool& deleteEntity = AppState::getInstance().deleteEntity();
 
 	ImGui::Checkbox("Follow Mouse", &followMouse);
 	ImGui::Checkbox("Snap Grid", &snapGrid);
 	ImGui::Checkbox("Show Grid", &showGrid);
-	if(ImGui::Button("Delete")) {
-		deleteEntity = true;
-	}
 
 	static std::string& filename = AppState::getInstance().filename();
 	static bool& save = AppState::getInstance().save();

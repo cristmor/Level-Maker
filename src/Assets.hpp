@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <stdexcept>
+#include <iostream>
 
 // Deps
 #include "SFML/Graphics.hpp"
@@ -41,6 +42,7 @@ public:
 	const Animation& getAnimation(std::string tag) { return mAnimationMap[tag]; }
 
 	const AnimationMap& getAnimationMap() { return mAnimationMap; }
+	const TextureMap& getTextureMap() { return mTextureMap; }
 
 private:
 	void addTexture(std::string tag, std::string path);

@@ -95,7 +95,7 @@ void App::run() {
 				newPosition.y = newPosition.y + (16 * SCALE)/2 - (newPosition.y%static_cast<int>(16 * SCALE));
 			}
 			mCurrentEntity->setPosition({static_cast<float>(newPosition.x), static_cast<float>(newPosition.y)});
-			mTextPosition.setPosition(entityP.x - textBB.x/2, entityP.y - entityBB.y/2 - textBB.y - 5);
+			mTextPosition.setPosition(entityP.x - textBB.x, entityP.y - entityBB.y/2 - textBB.y - 5);
 			mTextPosition.setString("(" + std::to_string(static_cast<int>(entityP.x)) + "," + std::to_string(static_cast<int>(entityP.y)) + ")");
 		}
 
@@ -127,7 +127,6 @@ void App::run() {
 			if(entityManager.entities().size()) {
 				// may need to change this
 				entityManager.deleteEntity("", mCurrentEntity->copyNo());
-				std::cout << "entities.size():" << entityManager.entities().size() << std::endl;
 				for(size_t i = entityManager.entities().size() - 1;i > 0;i--) {
 					if(entityManager.entities()[i]) {
 						mCurrentEntity = entityManager.entities()[i];
@@ -283,19 +282,19 @@ void App::selectEntity() {
 		if(entity) {
 			auto entityBB = entity->boundingBox(); // need for half-Size
 			auto entityP = entity->position();
-			if(newMousePosition.x >= (entityP.x - entityBB.x) && newMousePosition.x <= (entityBB.x + entityP.x) &&
-			   newMousePosition.y >= (entityP.y - entityBB.y) && newMousePosition.y <= (entityBB.y + entityP.y)) {
+			if(newMousePosition.x >= (entityP.x - entityBB.x/2) && newMousePosition.x <= (entityBB.x/2 + entityP.x) &&
+			   newMousePosition.y >= (entityP.y - entityBB.y/2) && newMousePosition.y <= (entityBB.y/2 + entityP.y)) {
 				mCurrentEntity = entity;
 				followMouse = true;
 				// May need to change this
 				entityTag = mCurrentEntity->tag();
 				animationTag = mCurrentEntity->animationTag();
 				layer = mCurrentEntity->layer;
-				std::cout << "id:" << mCurrentEntity->copyNo()  << std::endl;
 			}
 		}
 	}
 }
+
 void App::sortEntitiesByLayer() {
 	// Change this
 	static const EntityVector& entities = GameState::getInstance().entityManager().entities();
